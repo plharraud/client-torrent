@@ -22,6 +22,9 @@ dependencies {
 
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:31.0.1-jre'
+
+	// https://mvnrepository.com/artifact/be.adaxisoft/Bencode
+	implementation group: 'be.adaxisoft', name: 'Bencode', version: '2.0.0'
 }
 
 application {
