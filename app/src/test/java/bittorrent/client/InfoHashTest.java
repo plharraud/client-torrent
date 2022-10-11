@@ -15,7 +15,7 @@ public class InfoHashTest {
 	
 	@Test
 	public void testFile1()  {
-		Torrent t = new Torrent(new File("src/main/resources/torrents/mauvais_nom_fichier.txt.torrent")); //mettre hello_world.txt.torrent
+		Torrent t = new Torrent(new File("src/main/resources/torrents/hello_world.txt.torrent"));
 		assertEquals("285DCBB0DC5AE2ECB78F363AD1295A321C8EBFAF", t.getInfo_hash_hex());
 	}
 	
