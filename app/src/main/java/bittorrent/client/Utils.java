@@ -1,4 +1,4 @@
-package bittorrent;
+package bittorrent.client;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

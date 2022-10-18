@@ -1,4 +1,4 @@
-package bittorrent;
+package bittorrent.client;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -28,6 +28,7 @@ public class Torrent {
 			throw new RuntimeException(e);
 		}
 
+		
 	}
 
 	public byte[] getInfo_hash() {
