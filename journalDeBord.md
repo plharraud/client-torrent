@@ -7,3 +7,8 @@ L'objectif de ce journal est de noter le temps passé sur les tâches (Graduatio
 Temps : ~ 3h
 
 ## Réunions
+
+## Temps de travail
+
+### Florent
+21/10/2022: ~ 2h
