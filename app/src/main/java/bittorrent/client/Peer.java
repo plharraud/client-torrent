@@ -2,7 +2,6 @@ package bittorrent.client;
 
 import java.util.Arrays;
 
-import javax.naming.directory.InvalidAttributesException;
 
 public class Peer {
     public static final int PEER_SIZE = 6;
@@ -38,4 +37,10 @@ public class Peer {
     public String getPort() {
         return port;
     }
+
+    @Override
+    public String toString() {
+        return "Peer [ip=" + ip + ", port=" + port + "]";
+    }
+    
 }

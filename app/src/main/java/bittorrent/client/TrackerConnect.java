@@ -1,6 +1,7 @@
 package bittorrent.client;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
@@ -27,7 +28,7 @@ public class TrackerConnect {
         announce  = torrent.getAnnounce();
         name = torrent.getName();
 
-        // TODO : Calculate the port with availability
+        // TODO : Calculate the port, checking availability
         port = 6881;
 
         // Initialize a random peer_id
@@ -36,8 +37,9 @@ public class TrackerConnect {
 
     }
 
-    public HttpResponse<String> trackerRequest(HttpClient httpClient){
+    public HttpResponse<InputStream> trackerRequest(){
         try {
+
             // Build the http rquest
             HttpRequest httpRequest = HttpRequest.newBuilder(new URI(createMinimalUriString()))
             .timeout(Duration.of(10,ChronoUnit.SECONDS))
@@ -45,7 +47,8 @@ public class TrackerConnect {
             .build();
             
             //Once the request is forged, we need to use the httpClient ot send it
-            HttpResponse<String> response = httpClient.send(httpRequest, BodyHandlers.ofString());
+            HttpClient httpClient = HttpClient.newHttpClient();
+            HttpResponse<InputStream> response = httpClient.send(httpRequest, BodyHandlers.ofInputStream());
             return response;
 
         } catch (URISyntaxException | IOException | InterruptedException e) {
@@ -55,6 +58,7 @@ public class TrackerConnect {
         }
     }
 
+    // Minimal uri used to make the request to the tracker
     public String createMinimalUriString() {
         return
             announce + '?' +
@@ -64,12 +68,17 @@ public class TrackerConnect {
     }
 
     // Used for testing purposes, so that  we can generate repeatable client IDS
+    // We use the filename as the seed of the random number generator
     public void generateSeededPeerId() {
         peer_id = new byte[20];
         new Random(name.hashCode()).nextBytes(peer_id);
     }
 
     public TrackerInfo getTrackerInfo() {
+        // If we have no tracker info, we request it from the tracker
+        if (trackerInfo == null) {
+            trackerInfo = new TrackerInfo(trackerRequest().body());
+        }
         return trackerInfo;
     }
 }

@@ -2,9 +2,7 @@ package bittorrent.client;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.Console;
 import java.io.File;
-import java.net.http.HttpClient;
 
 public class BittorentTrackerTest {
 

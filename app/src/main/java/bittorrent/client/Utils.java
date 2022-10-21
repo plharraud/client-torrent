@@ -63,6 +63,8 @@ public class Utils {
         String ipString = "";
         for (byte b : ipByte) {
             int unsignedByte = b & 0xff; // java stores it's bytes as signed, ranging from -127 to 128. we use a mask to change the value to an unsigned byte
+            //byte[] singleByte = {b};
+            //int unsignedByte = (new BigInteger(singleByte)).intValueExact();
             ipString += Integer.toString(unsignedByte) + ".";
         }
         return ipString.substring(0,ipString.length()-1);
@@ -76,7 +78,11 @@ public class Utils {
 
     //TODO: add tests to this function
     public static String byteArrayToString(byte[] byteArray){
-        return Integer.toString((new BigInteger(byteArray)).intValueExact());
+        int decimal = 0;
+        for (byte b : byteArray) {
+            decimal = (decimal << 8) + (b & 0xff);
+        }
+        return Integer.toString(decimal);
     }
 
     //TODO: add tests to this function
@@ -88,5 +94,4 @@ public class Utils {
         }
         return deeperByteArray;
     }
-
 }
