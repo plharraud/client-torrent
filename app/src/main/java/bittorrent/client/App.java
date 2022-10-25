@@ -4,11 +4,28 @@
 package bittorrent.client;
 
 public class App {
+<<<<<<< Updated upstream
+=======
+    public static final String PATHNAME = "app/src/test/resources/torrents/CuteTogepi.jpg.torrent";
+
+>>>>>>> Stashed changes
     public String getGreeting() {
         return "Hello World! Test";
     }
 
     public static void main(String[] args) {
+<<<<<<< Updated upstream
         System.out.println(new App().getGreeting());
+=======
+
+        // TODO : Make a proper CLI program
+        // We start by loading the torrent file
+        Torrent torrent = new Torrent(new File(PATHNAME));
+        // Then, we get the tracker's informations
+        TrackerConnect tc = new TrackerConnect(torrent);
+        TrackerInfo info = tc.getTrackerInfo();
+
+        System.out.println(info);
+>>>>>>> Stashed changes
     }
 }
