@@ -6,53 +6,27 @@ package bittorrent.client;
 import java.io.File;
 
 public class App {
-    <<<<<<<
-    Updated upstream=======
-    public static final String PATHNAME = "app/src/test/resources/torrents/CuteTogepi.jpg.torrent";
 
-    >>>>>>>
     Stashed changes
     public static final String PATHNAME = "src/test/resources/torrents/CuteTogepi.jpg.torrent";
+    public static final String PATHNAMEICEBERG = "src/test/resources/torrents/iceberg.jpg.torrent";
 
     public String getGreeting() {
         return "Hello World! Test";
     }
 
     public static void main(String[] args) {
-<<<<<<< Updated upstream
-       
 
         // TODO : Make a proper CLI program
         // We start by loading the torrent file
-        Torrent torrent = new Torrent(new File(PATHNAME));
+        Torrent torrent = new Torrent(new File(PATHNAMEICEBERG));
         // Then, we get the tracker's informations
         TrackerConnect tc = new TrackerConnect(torrent);
         TrackerInfo info = tc.getTrackerInfo();
+        
+        // TODO : getOtherPeers
+        Leeching.Send(torrent.getInfo_hash(), tc.getPeer_id(), info.getPeers()[1])
 
         System.out.println(info);
-=======
-
-        // TODO : Make a proper CLI program
-        // We start by loading the torrent file
-        Torrent torrent = new Torrent(new File(PATHNAME));
-        // Then, we get the tracker's informations
-        TrackerConnect tc = new TrackerConnect(torrent);
-        TrackerInfo info = tc.getTrackerInfo();
-
-        System.out.println(info);
->>>>>>> Stashed changes
-    }}
-
-    
-    
-    
-    
-    
-
-    
-    
-     
-    
-
-    
-    
+    }
+}

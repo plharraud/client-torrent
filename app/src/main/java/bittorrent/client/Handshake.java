@@ -14,10 +14,10 @@ public class Handshake {
     private byte[] info_hash;
     private byte[] peer_id;
 
-    public Handshake(String name_length, String name, byte[] extension, byte[] info_hash, byte[] peer_id) {
-        this.name_length = name_length;
-        this.name = name;
-        this.extension = extension;
+    public Handshake(byte[] info_hash, byte[] peer_id) {
+        this.name_length = "19";
+        this.name = "BitTorrent protocol";
+        // this.extension = extension;
         this.info_hash = info_hash;
         this.peer_id = peer_id;
     }
