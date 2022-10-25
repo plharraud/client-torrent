@@ -1,7 +1,9 @@
 package bittorrent.client;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.net.URLEncoder;
+import java.util.Arrays;
 
 public class Utils {
 
@@ -55,4 +57,41 @@ public class Utils {
     	
     }
 
+    // TODO : add tests to this function
+    public static String ipByteToString(byte[] ipByte) {
+        assert(ipByte.length == 4);
+        String ipString = "";
+        for (byte b : ipByte) {
+            int unsignedByte = b & 0xff; // java stores it's bytes as signed, ranging from -127 to 128. we use a mask to change the value to an unsigned byte
+            //byte[] singleByte = {b};
+            //int unsignedByte = (new BigInteger(singleByte)).intValueExact();
+            ipString += Integer.toString(unsignedByte) + ".";
+        }
+        return ipString.substring(0,ipString.length()-1);
+    }
+
+    //TODO: add tests to this function
+    public static int portByteToInt(byte[] portByte){
+        assert(portByte.length == 2);
+        return byteArrayToUnsignedInt(portByte);
+    }
+
+    //TODO: add tests to this function
+    public static int byteArrayToUnsignedInt(byte[] byteArray){
+        int decimal = 0;
+        for (byte b : byteArray) {
+            decimal = (decimal << 8) + (b & 0xff);
+        }
+        return decimal;
+    }
+
+    //TODO: add tests to this function
+    public static byte[][] deepenByteArray (byte[] byteArray,int sliceLengh){
+        assert(byteArray.length % sliceLengh == 0);
+        byte[][] deeperByteArray = new byte[byteArray.length/sliceLengh][sliceLengh];
+        for ( int i = 0 ; i < byteArray.length; i += 6 ){
+            deeperByteArray[i/sliceLengh] = Arrays.copyOfRange(byteArray, i, i+sliceLengh);
+        }
+        return deeperByteArray;
+    }
 }
