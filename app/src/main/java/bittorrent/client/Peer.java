@@ -1,42 +1,39 @@
 package bittorrent.client;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 
 
 public class Peer {
     public static final int PEER_SIZE = 6;
-    private byte[] ipInBytes;
-    private byte[] portInBytes;
-    private String ip;
-    private String port;
+    private InetAddress ip;
+    private int port;
 
     // Constructor from a byte array
     public Peer(byte[] peerInfo) {
+        try {
+            assert(peerInfo.length == 6);
+            // The first 4 bytes are used to store the IP
+            byte[] ipInBytes = Arrays.copyOfRange(peerInfo, 0, 4);
+            ip = InetAddress.getByAddress(ipInBytes);
 
-        assert(peerInfo.length == 6);
-        // The first 4 bytes are used to store the IP
-        ipInBytes = Arrays.copyOfRange(peerInfo, 0, 4);
-        ip = Utils.ipByteToString(ipInBytes);
+            // The next 2 are used to store the port
+            byte[] portInBytes = Arrays.copyOfRange(peerInfo, 4, 6);
+            port = Utils.portByteToInt(portInBytes);
 
-        // The next 2 are used to store the port
-        portInBytes = Arrays.copyOfRange(peerInfo, 4, 6);
-        port = Utils.portByteToString(portInBytes);
-        
+        } catch (UnknownHostException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
     }
 
-    public byte[] getIpInBytes() {
-        return ipInBytes;
-    }
-
-    public byte[] getPortInBytes() {
-        return portInBytes;
-    }
-
-    public String getIp() {
+    public InetAddress getIp() {
         return ip;
     }
 
-    public String getPort() {
+    public int getPort() {
         return port;
     }
 

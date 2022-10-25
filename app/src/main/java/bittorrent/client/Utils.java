@@ -71,18 +71,18 @@ public class Utils {
     }
 
     //TODO: add tests to this function
-    public static String portByteToString(byte[] portByte){
+    public static int portByteToInt(byte[] portByte){
         assert(portByte.length == 2);
-        return byteArrayToString(portByte);
+        return byteArrayToUnsignedInt(portByte);
     }
 
     //TODO: add tests to this function
-    public static String byteArrayToString(byte[] byteArray){
+    public static int byteArrayToUnsignedInt(byte[] byteArray){
         int decimal = 0;
         for (byte b : byteArray) {
             decimal = (decimal << 8) + (b & 0xff);
         }
-        return Integer.toString(decimal);
+        return decimal;
     }
 
     //TODO: add tests to this function
