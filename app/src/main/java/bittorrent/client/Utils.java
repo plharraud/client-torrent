@@ -90,7 +90,7 @@ public class Utils {
         assert(byteArray.length % sliceLengh == 0);
         byte[][] deeperByteArray = new byte[byteArray.length/sliceLengh][sliceLengh];
         for ( int i = 0 ; i < byteArray.length; i += 6 ){
-            deeperByteArray[i/sliceLengh] = Arrays.copyOfRange(byteArray, i, i+sliceLengh - 1);
+            deeperByteArray[i/sliceLengh] = Arrays.copyOfRange(byteArray, i, i+sliceLengh);
         }
         return deeperByteArray;
     }

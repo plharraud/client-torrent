@@ -6,7 +6,7 @@ package bittorrent.client;
 import java.io.File;
 
 public class App {
-    public static final String PATHNAME = "app/src/test/resources/torrents/CuteTogepi.jpg.torrent";
+    public static final String PATHNAME = "src/test/resources/torrents/CuteTogepi.jpg.torrent";
     public String getGreeting() {
         return "Hello World! Test";
     }

@@ -33,7 +33,8 @@ public class TrackerInfo {
 
             // Load the peers
             // We Create a matrix of peer vector, each vector is PEER_SIZE bytes long  (6) and represents a peer
-            byte[][] peersInBytes = Utils.deepenByteArray(document.get("peers").getBytes(),Peer.PEER_SIZE);
+            byte[] rawPeers = document.get("peers").getBytes();
+            byte[][] peersInBytes = Utils.deepenByteArray(rawPeers,Peer.PEER_SIZE);
             peers = new Peer[peersInBytes.length];
             for (int i = 0; i < peersInBytes.length; i++){
                 peers[i] = new Peer(peersInBytes[i]);
