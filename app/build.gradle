@@ -32,7 +32,7 @@ application {
     mainClass = 'bittorrent.client.App'
 }
 
-tasks.named('test') {
+/*tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
-}
+}*/

@@ -4,10 +4,10 @@
 package bittorrent.client;
 
 import java.io.File;
+import java.io.IOException;
 
 public class App {
 
-    Stashed changes
     public static final String PATHNAME = "src/test/resources/torrents/CuteTogepi.jpg.torrent";
     public static final String PATHNAMEICEBERG = "src/test/resources/torrents/iceberg.jpg.torrent";
 
@@ -23,10 +23,15 @@ public class App {
         // Then, we get the tracker's informations
         TrackerConnect tc = new TrackerConnect(torrent);
         TrackerInfo info = tc.getTrackerInfo();
-        
-        // TODO : getOtherPeers
-        Leeching.Send(torrent.getInfo_hash(), tc.getPeer_id(), info.getPeers()[1])
 
         System.out.println(info);
+
+        // TODO : getOtherPeers
+        Leeching leech = new Leeching();
+        try {
+            leech.send(torrent.getInfo_hash(), tc.getPeer_id(), info.getPeers()[1]);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
