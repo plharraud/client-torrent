@@ -22,50 +22,34 @@ import java.io.OutputStream;
 public class LeechingFull {
 
     public void leech(Torrent torrent, byte[] peer_id, Peer seeder) throws IOException {
+
+        final int maxsizepacket = 16384;
+
         Handshake handreq = new Handshake(19, "BitTorrent protocol", new byte[8], torrent.getInfo_hash(), peer_id);
 
         // TODO : Remove / before IP
         String server = seeder.getIp().toString().substring(1); // Server name or IP address
+
         int servPort = seeder.getPort();
-
-        // Convert argument String to bytes using the default character encoding
-        byte[] data = new byte[68];
-
-        final int maxsizepacket = 16384;
 
         try {
             // Create socket that is connected to server on specified port
             System.out.println("Seeder => IP : " + server + ", Port : " + servPort);
             Socket socket = new Socket(server, servPort);
 
-            System.out.println("Connected to server...sending Handshake");
-
             DataInputStream data_in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
 
-            DataOutputStream real_out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+            DataOutputStream data_out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 
-            handreq.toByteArray(real_out);
+            // HANDSHAKE ===>
+            handreq.sendHandshake(data_out);
 
-            byte[] name_leng = new byte[1];
-            byte[] nameb = new byte[19];
-            byte[] extension = new byte[8];
-            byte[] hash = new byte[20];
-            byte[] peerid = new byte[20];
+            // HANDSHAKE <===
+            Handshake handresp = new Handshake(data_in);
 
-            data_in.read(name_leng);
-            data_in.read(nameb);
-            data_in.read(extension);
-            data_in.read(hash);
-            data_in.read(peerid);
-
-            int name_length = Utils.byteArrayToUnsignedInt(name_leng);
-            String name = new String(nameb);
-
-            Handshake handresp = new Handshake(name_length, name, extension, hash, peer_id);
-
-            System.out.println("Handshake req : ");
+            System.out.println("Handshake request : ");
             System.out.println(handreq.toString());
-            System.out.println("Handshake resp : ");
+            System.out.println("Handshake response : ");
             System.out.println(handresp.toString());
 
             // BITFIELD ===>
@@ -74,82 +58,69 @@ public class LeechingFull {
 
             // BITFIELD <===
             Bitfield Bitf = new Bitfield();
-            Bitf.sendBitfield(real_out);
+            Bitf.sendBitfield(data_out);
 
             // INTERESTED ===>
             Interested Inti = new Interested();
-            Inti.sendSeq(real_out);
+            Inti.sendSeq(data_out);
 
             // UNCHOKE <===
-            byte[] unchoketest = new byte[4];
+            byte[] unchoketest = new byte[5];
             data_in.read(unchoketest);
 
             int torrentlength = torrent.getLength();
             int torrentpiecelength = torrent.getPiece_length();
-            System.out.println("torrent length : " + torrentlength);
-            System.out.println("piece length : " + torrentpiecelength);
-
-            byte[] pspec = new byte[4];
-            data_in.read(pspec);
 
             int piececur = 0;
-            // int piecemax = (int) Math.ceil(torrentlength / torrentpiecelength);
-            int piecemax = torrentlength / torrentpiecelength;
+            int piecemax = (int) Math.ceil((float) torrentlength / (float) torrentpiecelength);
             int remaininglength = torrentpiecelength;
             int lenreq;
             int piecepart = 0;
 
-            byte[] p1 = new byte[4];
-            byte[] p2 = new byte[1];
-            byte[] p3 = new byte[4];
-            byte[] p4 = new byte[4];
-            byte[] p5 = new byte[16384];
+            System.out.println("torrent length : " + torrentlength);
+            System.out.println("piece length : " + torrentpiecelength);
+            System.out.println("nb of pieces : " + piecemax);
+            System.out.println("download rate : " + maxsizepacket);
 
             ByteArrayOutputStream imagebytes = new ByteArrayOutputStream();
 
-            // collect pieces and place it in a buffer
+            // TODO : Implement DataStructure for pieces + Assemble pieces part
+            // Piece[][] pieces = new Piece[piecemax][];
 
-            for (piececur = 0; piececur < piecemax + 1; piececur++) {
+            // Collect all pieces and place it in a buffer
+            for (piececur = 0; piececur < piecemax; piececur++) {
 
-                if (piececur == piecemax) {
+                if (piececur == piecemax - 1) {
                     remaininglength = torrentlength - torrentpiecelength * piececur;
                 } else {
                     remaininglength = torrentpiecelength;
                 }
-
                 piecepart = 0;
 
                 while (remaininglength > 0) {
+
                     if (remaininglength < maxsizepacket) {
                         lenreq = remaininglength;
                     } else {
                         lenreq = maxsizepacket;
                     }
-                    Request req = new Request(piececur, piecepart, lenreq);
+
                     // REQUEST ===>
-                    req.sendReq(real_out);
-                    data_in.read(p1);
-                    data_in.read(p2);
-                    data_in.read(p3);
-                    data_in.read(p4);
-                    if (remaininglength >= maxsizepacket) {
-                        data_in.read(p5);
-                        imagebytes.write(p5);
-                    } else {
-                        byte[] p6 = new byte[remaininglength];
-                        data_in.read(p6);
-                        imagebytes.write(p6);
-                        System.out.println("last piece length : " + remaininglength);
-                    }
+                    Request req = new Request(piececur, piecepart, lenreq);
+                    req.sendReq(data_out);
+
+                    // PIECE <===
+                    Piece piecei = new Piece(data_in, remaininglength, maxsizepacket);
+                    piecei.writePieceToFile(imagebytes);
+
                     remaininglength -= maxsizepacket;
                     piecepart++;
                 }
-
             }
 
             // byte array to jpg
             try (OutputStream out = new BufferedOutputStream(
-                    new FileOutputStream("src/test/resources/torrents/test.jpg"))) {
+                    new FileOutputStream("src/test/results/test.jpg"))) {
                 out.write(imagebytes.toByteArray());
             }
 

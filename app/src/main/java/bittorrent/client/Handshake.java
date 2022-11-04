@@ -22,7 +22,31 @@ public class Handshake {
         this.peer_id = peer_id;
     }
 
-    public void toByteArray(DataOutputStream out) throws IOException {
+    public Handshake(DataInputStream in) throws IOException {
+        try {
+            byte[] name_leng = new byte[1];
+            byte[] nameb = new byte[19];
+            byte[] extension = new byte[8];
+            byte[] hash = new byte[20];
+            byte[] peerid = new byte[20];
+
+            in.read(name_leng);
+            in.read(nameb);
+            in.read(extension);
+            in.read(hash);
+            in.read(peerid);
+
+            setName_length(Utils.byteArrayToUnsignedInt(name_leng));
+            setName(new String(nameb));
+            setExtension(extension);
+            setInfo_hash(hash);
+            setPeer_id(peerid);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendHandshake(DataOutputStream out) throws IOException {
         try {
             out.writeByte(name_length);
             out.writeBytes(name);
