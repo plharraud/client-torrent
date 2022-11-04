@@ -10,6 +10,7 @@ public class App {
 
     public static final String PATHNAME = "src/test/resources/torrents/CuteTogepi.jpg.torrent";
     public static final String PATHNAMEICEBERG = "src/test/resources/torrents/iceberg.jpg.torrent";
+    public static final String PATHNAMETROLL = "src/test/resources/torrents/troll.jpg.torrent";
 
     public String getGreeting() {
         return "Hello World! Test";
@@ -27,9 +28,8 @@ public class App {
         System.out.println(info);
 
         // TODO : getOtherPeers
-        Leeching leech = new Leeching();
         try {
-            leech.send(torrent.getInfo_hash(), tc.getPeer_id(), info.getPeers()[1]);
+            new LeechingFull().leech(torrent, tc.getPeer_id(), info.getPeers()[1]);
         } catch (IOException e) {
             e.printStackTrace();
         }
