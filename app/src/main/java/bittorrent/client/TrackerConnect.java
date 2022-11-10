@@ -28,6 +28,7 @@ public class TrackerConnect {
         info_hash = torrent.getInfo_hash();
         announce = torrent.getAnnounce();
         name = torrent.getName();
+        port = 2345;
         // Initialize a random peer_id
         peer_id = new byte[20];
         new Random().nextBytes(peer_id);

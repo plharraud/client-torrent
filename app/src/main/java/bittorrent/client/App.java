@@ -8,30 +8,64 @@ import java.io.IOException;
 
 public class App {
 
-    public static final String PATHNAME = "src/test/resources/torrents/CuteTogepi.jpg.torrent";
-    public static final String PATHNAMEICEBERG = "src/test/resources/torrents/iceberg.jpg.torrent";
-    public static final String PATHNAMETROLL = "src/test/resources/torrents/troll.jpg.torrent";
-    public static final String PATHNAMEBOEUF= "src/test/resources/torrents/boeufalabiere.jpg.torrent";
-    public static final String PATHNAME4K= "src/test/resources/torrents/Hutton_in_the_Forest_4K.jpg.torrent";
-
-    public String getGreeting() {
-        return "Hello World! Test";
-    }
+    public boolean DEBUG = false;
+    public boolean INFO = false;
+    //TODO: lancer app depuis une nouvelle classe main
 
     public static void main(String[] args) {
-
-        // TODO : Make a proper CLI program
-        // We start by loading the torrent file
-        Torrent torrent = new Torrent(new File(PATHNAME4K));
-        // Then, we get the tracker's informations
-        TrackerConnect tc = new TrackerConnect(torrent);
-        TrackerInfo info = tc.getTrackerInfo();
-
-        System.out.println(info);
-
-        // TODO : getOtherPeers
+        Options cliOptions = new Options();
+        cliOptions.addOption("debug", false, "");
+        cliOptions.addOption("info", false, "");
         try {
-            new Leecher().leech(torrent, tc.getPeer_id(), info.getPeers()[1]);
+
+            CommandLineParser cliParser = new DefaultParser();
+            CommandLine cliCmd = cliParser.parse(cliOptions, args);
+            if (cliCmd.hasOption("debug")) {
+                //this.DEBUG = true;
+            }
+            if (cliCmd.hasOption("info")) {
+                
+            }
+            String[] cliArgs = cliCmd.getArgs();
+            
+            if (cliArgs.length != 2) {
+                throw new CLIException("specify .torrent file and destination directory");
+            }
+
+            String torrentFilePath = cliArgs[0];
+            String destinationPath = cliArgs[1];
+
+            if (! FilenameUtils.getExtension(torrentFilePath).equals("torrent")) {
+                throw new CLIException(torrentFilePath + " is not a .torrent file");
+            }
+
+
+            File destinationFile = new File(destinationPath);
+            if (! destinationFile.isDirectory()) {
+                throw new CLIException(destinationPath + " does not exist or is not a directory");
+            }
+
+            Torrent torrent = new Torrent(torrentFile);
+            // Then, we get the tracker's informations
+            TrackerConnect tc = new TrackerConnect(torrent);
+            TrackerInfo info = tc.getTrackerInfo();
+            byte[] selfPeerId = tc.getPeer_id();
+
+            System.out.println("peers:");
+            for (int i = 1; i < info.peersList.size(); i++) {
+                Peer peer = info.peersList.get(i);
+                System.out.println(peer.getIp().toString() +":"+ peer.getPort());
+                //TODO multithread et choix des peers
+                new LeechingFull().leech(torrent, selfPeerId, peer);
+            }
+
+        } catch (CLIException e) {
+            System.err.println(e.getMessage());
+            // HelpFormatter cliHelpFormatter = new HelpFormatter();
+            // cliHelpFormatter.printHelp(args[0], cliOptions);
+            System.exit(1);
+        } catch (ParseException e) {
+            System.err.println(e);
         } catch (IOException e) {
             e.printStackTrace();
         }
