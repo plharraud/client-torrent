@@ -2,69 +2,84 @@ package bittorrent.client;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 
 public class Piece {
-    private byte[] length = new byte[4];
-    private byte[] type = new byte[1];
-    private byte[] index = new byte[4];
-    private byte[] offset = new byte[4];
-    private byte[] piece = new byte[16384];
 
-    public Piece(DataInputStream in, int remaininglength, int maxsizepacket) throws IOException {
-        in.read(length);
-        in.read(type);
-        in.read(index);
-        in.read(offset);
-        if (remaininglength < maxsizepacket) {
-            piece = new byte[remaininglength];
-            System.out.println("last piece length : " + remaininglength);
+    final int maxsizepacket = 16384;
+    PieceBlock[] piece;
+    byte[] piecesConcat;
+    int parts = 2;
+    int index;
+
+    public Piece(DataInputStream data_in, DataOutputStream data_out, int index) {
+        try {
+            this.index = index;
+            piece = new PieceBlock[2];
+            for (int i = 0; i < 2; i++) {
+                piece[i] = new PieceBlock(data_in, data_out, index, i, maxsizepacket);
+            }
+            // addPiecesBytes();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        in.read(piece);
     }
 
-    public void writePieceToFile(ByteArrayOutputStream b) throws IOException {
-        b.write(piece);
+    public Piece(DataInputStream data_in, DataOutputStream data_out, int index, int parts, int last_block_size) {
+        try {
+            this.index = index;
+            this.parts = parts;
+            if (parts == 2) {
+                piece = new PieceBlock[2];
+                piece[0] = new PieceBlock(data_in, data_out, index, 0, maxsizepacket);
+                piece[1] = new PieceBlock(data_in, data_out, index, 1, last_block_size);
+            } else {
+                piece = new PieceBlock[1];
+                piece[0] = new PieceBlock(data_in, data_out, index, 0, last_block_size);
+            }
+            // addPiecesBytes();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public byte[] getLength() {
-        return this.length;
+    /*
+     * public void addPiecesBytes() {
+     * try {
+     * ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+     * for (int i = 0; i < parts; i++) {
+     * outputStream.write(piece[i].getBlocBytes());
+     * }
+     * piecesConcat = outputStream.toByteArray();
+     * System.out.println("ah" + Utils.bytesToHex(piecesConcat).toString());
+     * } catch (IOException e) {
+     * e.getStackTrace();
+     * }
+     * }
+     */
+
+    public void writePiece(ByteArrayOutputStream imagebytes) {
+        try {
+            for (int i = 0; i < parts; i++) {
+                piece[i].writeBlocks(imagebytes);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void setLength(byte[] length) {
-        this.length = length;
+    public byte[] getBytes() {
+        return piecesConcat;
     }
 
-    public byte[] getType() {
-        return this.type;
+    public int getIndex() {
+        return index;
     }
 
-    public void setType(byte[] type) {
-        this.type = type;
-    }
-
-    public byte[] getIndex() {
-        return this.index;
-    }
-
-    public void setIndex(byte[] index) {
-        this.index = index;
-    }
-
-    public byte[] getOffset() {
-        return this.offset;
-    }
-
-    public void setOffset(byte[] offset) {
-        this.offset = offset;
-    }
-
-    public byte[] getPiece() {
-        return this.piece;
-    }
-
-    public void setPiece(byte[] piece) {
-        this.piece = piece;
+    public byte[] getFullBytes() {
+        return piecesConcat;
     }
 
 }

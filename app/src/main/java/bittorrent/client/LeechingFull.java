@@ -88,41 +88,13 @@ public class LeechingFull {
             // Piece[][] pieces = new Piece[piecemax][];
 
             // Collect all pieces and place it in a buffer
-            for (piececur = 0; piececur < piecemax; piececur++) {
+            TorrentFile file = new TorrentFile(torrentlength, torrentpiecelength);
 
-                if (piececur == piecemax - 1) {
-                    remaininglength = torrentlength - torrentpiecelength * piececur;
-                } else {
-                    remaininglength = torrentpiecelength;
-                }
-                piecepart = 0;
+            file.Leeching100(data_in, data_out);
 
-                while (remaininglength > 0) {
+            file.writeBytesBlocks();
 
-                    if (remaininglength < maxsizepacket) {
-                        lenreq = remaininglength;
-                    } else {
-                        lenreq = maxsizepacket;
-                    }
-
-                    // REQUEST ===>
-                    Request req = new Request(piececur, piecepart, lenreq);
-                    req.sendReq(data_out);
-
-                    // PIECE <===
-                    Piece piecei = new Piece(data_in, remaininglength, maxsizepacket);
-                    piecei.writePieceToFile(imagebytes);
-
-                    remaininglength -= maxsizepacket;
-                    piecepart++;
-                }
-            }
-
-            // byte array to jpg
-            try (OutputStream out = new BufferedOutputStream(
-                    new FileOutputStream("src/test/results/test.jpg"))) {
-                out.write(imagebytes.toByteArray());
-            }
+            System.out.println("DONE");
 
             socket.close(); // Close the socket and its streams
 
