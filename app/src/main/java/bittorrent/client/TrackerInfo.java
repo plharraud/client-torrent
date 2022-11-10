@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -19,6 +20,7 @@ public class TrackerInfo {
     private int complete;
     private int incomplete;
     private Peer[] peers;
+    public ArrayList<Peer> peersList = new ArrayList<Peer>();
 
     TrackerInfo(InputStream bencodeResponse) {
         try {        
@@ -26,7 +28,9 @@ public class TrackerInfo {
             BDecoder reader = new BDecoder(bencodeResponse);
             Map<String, BEncodedValue> document = reader.decodeMap().getMap();
 
+
             // Load the values
+            //TODO verifier qu'elles sont la avant de les get, ou traiter les erreurs
             interval = document.get("interval").getInt();
             complete = document.get("complete").getInt();
             incomplete = document.get("incomplete").getInt();
@@ -34,10 +38,12 @@ public class TrackerInfo {
             // Load the peers
             // We Create a matrix of peer vector, each vector is PEER_SIZE bytes long  (6) and represents a peer
             byte[] rawPeers = document.get("peers").getBytes();
-            byte[][] peersInBytes = Utils.deepenByteArray(rawPeers,Peer.PEER_SIZE);
+            byte[][] peersInBytes = Utils.deepenByteArray(rawPeers, Peer.PEER_SIZE);
             peers = new Peer[peersInBytes.length];
             for (int i = 0; i < peersInBytes.length; i++){
-                peers[i] = new Peer(peersInBytes[i]);
+                Peer peer = new Peer(peersInBytes[i]);
+                peers[i] = peer;
+                peersList.add(peer);
             }
 
         } catch (IOException e) {
