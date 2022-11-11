@@ -21,7 +21,7 @@ public class App {
 
         // TODO : Make a proper CLI program
         // We start by loading the torrent file
-        Torrent torrent = new Torrent(new File(PATHNAMEBOEUF));
+        Torrent torrent = new Torrent(new File(PATHNAMEICEBERG));
         // Then, we get the tracker's informations
         TrackerConnect tc = new TrackerConnect(torrent);
         TrackerInfo info = tc.getTrackerInfo();
@@ -30,7 +30,7 @@ public class App {
 
         // TODO : getOtherPeers
         try {
-            new LeechingFull().leech(torrent, tc.getPeer_id(), info.getPeers()[1]);
+            new Leecher().leech(torrent, tc.getPeer_id(), info.getPeers()[1]);
         } catch (IOException e) {
             e.printStackTrace();
         }

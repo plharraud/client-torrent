@@ -4,5 +4,5 @@
 gradle-user-home
 build
 bin
-#Ignore result file
-test.jpg
+
+/.metadata/
