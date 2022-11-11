@@ -35,8 +35,9 @@ public class Leecher {
             System.out.println(handresp.toString());
 
             // BITFIELD <===
-            byte[] bitfield = new byte[7];
-            data_in.read(bitfield);
+            Bitfield  bitfield = new Bitfield(data_in);
+            System.out.println("Bitfield received : ");
+            System.out.println(bitfield.toString());
 
             // BITFIELD ===>
             Bitfield Bitf = new Bitfield();
@@ -47,12 +48,14 @@ public class Leecher {
             Inti.sendSeq(data_out);
 
             // UNCHOKE <===
-            byte[] unchoketest = new byte[5];
-            data_in.read(unchoketest);
+            Unchoke unchoketest = new Unchoke(data_in);
+            System.out.println("Unchoke received : ");
+            System.out.println(unchoketest.toString());
 
             // Collect all pieces and place it in a buffer
             TorrentFile file = new TorrentFile(torrent.getLength(), torrent.getPiece_length());
             file.Leeching100(data_in, data_out);
+
             file.generateFile();
 
             System.out.println("Closing the socket");
