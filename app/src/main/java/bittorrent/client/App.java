@@ -29,7 +29,7 @@ public class App {
 
         // TODO : getOtherPeers
         try {
-            new LeechingFull().leech(torrent, tc.getPeer_id(), info.getPeers()[1]);
+            new Leecher().leech(torrent, tc.getPeer_id(), info.getPeers()[1]);
         } catch (IOException e) {
             e.printStackTrace();
         }
