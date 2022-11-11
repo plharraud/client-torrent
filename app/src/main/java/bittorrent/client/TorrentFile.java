@@ -9,12 +9,12 @@ import java.io.OutputStream;
 
 public class TorrentFile {
     final int maxsizepacket = 16384;
-    int length;
-    int piece_length;
-    int piece_parts;
-    int last_piece_parts;
-    int last_block_size;
-    Piece[] torrentFile;
+    private int length;
+    private int piece_length;
+    private int piece_parts;
+    private int last_piece_parts;
+    private int last_block_size;
+    private Piece[] torrentFile;
 
     public TorrentFile(int length, int piecelength) {
         this.length = length;
@@ -25,8 +25,16 @@ public class TorrentFile {
         if (last_piece_parts == 2) {
             this.last_block_size -= maxsizepacket;
         }
-        System.out.println("last block : " + last_block_size);
+        displayTorrentInfos();
         torrentFile = new Piece[piece_parts];
+    }
+
+    public void displayTorrentInfos() {
+        System.out.println("torrent length : " + length);
+        System.out.println("nb of pieces : " + piece_parts);
+        System.out.println("piece length : " + piece_length);
+        System.out.println("last block : " + last_block_size);
+        System.out.println("download rate : " + maxsizepacket);
     }
 
     public void Leeching100(DataInputStream data_in, DataOutputStream data_out) {
@@ -36,28 +44,30 @@ public class TorrentFile {
         }
         Piece piecefinal = new Piece(data_in, data_out, piece_parts - 1, last_piece_parts, last_block_size);
         addPiece(piecefinal);
+        System.out.println("✔ Leeching 100% complete");
     }
 
     public void addPiece(Piece piece) {
         torrentFile[piece.getIndex()] = piece;
     }
 
-    public void writeBytesBlocks() {
+    public void generateFile() {
         try {
             ByteArrayOutputStream imagebytes = new ByteArrayOutputStream();
             for (int i = 0; i < piece_parts; i++) {
                 torrentFile[i].writePiece(imagebytes);
             }
-            generateJpg(imagebytes);
+            bytesToJPG(imagebytes);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void generateJpg(ByteArrayOutputStream imagebytes) {
+    public void bytesToJPG(ByteArrayOutputStream imagebytes) {
         try (OutputStream out = new BufferedOutputStream(
                 new FileOutputStream("src/test/results/test.jpg"))) {
             out.write(imagebytes.toByteArray());
+            System.out.println("✔ JPG generated");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,22 +1,17 @@
 package bittorrent.client;
 
-import java.util.*;
-import java.lang.*;
 import java.io.*;
-import java.net.*;
 
 public class Handshake {
 
     // 1/19/8/20/20 = 68
-    private int name_length;
-    private String name;
+    private int name_length = 19;
+    private String name = "BitTorrent protocol";
     private byte[] extension;
     private byte[] info_hash;
     private byte[] peer_id;
 
-    public Handshake(int name_l, String name, byte[] extension, byte[] info_hash, byte[] peer_id) {
-        this.name_length = name_l;
-        this.name = name;
+    public Handshake(byte[] extension, byte[] info_hash, byte[] peer_id) {
         this.extension = extension;
         this.info_hash = info_hash;
         this.peer_id = peer_id;
@@ -59,7 +54,6 @@ public class Handshake {
             }
             out.flush();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

@@ -13,14 +13,11 @@ public class Request {
      * Begin offset of piece: 0x00000000
      * Piece Length: 0x00004000
      */
-    int length = 13;
-    byte[] lengthfill = new byte[3];
-    int type = 6;
-    byte[] index = new byte[4];
-
-    byte[] offset = new byte[4];
-
-    byte[] lengthpiece = new byte[4];
+    private int length = 13;
+    private int type = 6;
+    private byte[] index = new byte[4];
+    private byte[] offset = new byte[4];
+    private byte[] lengthpiece = new byte[4];
 
     public Request(int indexi, int part, int lengthpiecei) {
         this.index = Utils.fromUInt32(indexi);
@@ -33,8 +30,7 @@ public class Request {
     public void sendReq(DataOutputStream out) throws IOException {
         try {
             int sizeinit = out.size();
-            out.write(lengthfill);
-            out.writeByte(length);
+            out.writeInt(length);
             out.writeByte(type);
             out.write(index);
             out.write(offset);

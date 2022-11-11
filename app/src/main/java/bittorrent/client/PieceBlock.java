@@ -33,7 +33,7 @@ public class PieceBlock {
             req = new Request(piece_index, block_index, block_size);
             req.sendReq(data_out);
         } catch (IOException e) {
-            e.getStackTrace();
+            e.printStackTrace();
         }
 
     }
@@ -47,7 +47,7 @@ public class PieceBlock {
             data_in.read(piece_bytes);
             // System.out.println(Utils.bytesToHex(piece_bytes).toString());
         } catch (IOException e) {
-            e.getStackTrace();
+            e.printStackTrace();
         }
     }
 
