@@ -11,6 +11,9 @@ public class App {
     public static final String PATHNAME = "src/test/resources/torrents/CuteTogepi.jpg.torrent";
     public static final String PATHNAMEICEBERG = "src/test/resources/torrents/iceberg.jpg.torrent";
     public static final String PATHNAMETROLL = "src/test/resources/torrents/Cat03.jpg.torrent";
+    public static final String PATHNAMEPLANET = "src/test/personalTorrents/Soleil.png.torrent";
+
+    public static final int DEFAULT_PORT = 6685;
 
     public String getGreeting() {
         return "Hello World! Test";
@@ -20,18 +23,20 @@ public class App {
 
         // TODO : Make a proper CLI program
         // We start by loading the torrent file
-        Torrent torrent = new Torrent(new File(PATHNAMEICEBERG));
+        Torrent torrent = new Torrent(new File(PATHNAMEPLANET));
         // Then, we get the tracker's informations
-        TrackerConnect tc = new TrackerConnect(torrent);
-        TrackerInfo info = tc.getTrackerInfo();
-
+        TrackerConnect tc = new TrackerConnect(torrent,DEFAULT_PORT);
+        TrackerInfo info = tc.iHaveTheFullFile();
         System.out.println(info);
+        new Seeder().seed(torrent, DEFAULT_PORT,tc.getPeer_id());
 
-        // TODO : getOtherPeers
-        try {
-            new Leecher().leech(torrent, tc.getPeer_id(), info.getPeers()[1]);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        
+
+        // // TODO : getOtherPeers
+        // try {
+        //     new Leecher().leech(torrent, tc.getPeer_id(), info.getPeers()[1]);
+        // } catch (IOException e) {
+        //     e.printStackTrace();
+        // }
     }
 }
