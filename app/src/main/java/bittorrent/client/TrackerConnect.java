@@ -10,6 +10,9 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
 import java.util.Random;
+
+import javax.sound.sampled.Port;
+
 import java.time.temporal.ChronoUnit;
 
 public class TrackerConnect {
@@ -35,6 +38,16 @@ public class TrackerConnect {
 
     }
 
+    public TrackerConnect(Torrent torrent, int port) {
+        info_hash = torrent.getInfo_hash();
+        announce = torrent.getAnnounce();
+        name = torrent.getName();
+        // Initialize a random peer_id
+        peer_id = new byte[20];
+        new Random().nextBytes(peer_id);
+        this.port = port;
+    }
+
     public HttpResponse<InputStream> trackerRequest() {
         try {
 
@@ -56,12 +69,42 @@ public class TrackerConnect {
         }
     }
 
+    public HttpResponse<InputStream> trackerRequestComplete() {
+        try {
+
+            // Build the http rquest
+            HttpRequest httpRequest = HttpRequest.newBuilder(new URI(createCompleteUriString()))
+                    .timeout(Duration.of(10, ChronoUnit.SECONDS))
+                    .GET()
+                    .build();
+
+            // Once the request is forged, we need to use the httpClient ot send it
+            HttpClient httpClient = HttpClient.newHttpClient();
+            HttpResponse<InputStream> response = httpClient.send(httpRequest, BodyHandlers.ofInputStream());
+            return response;
+
+        } catch (URISyntaxException | IOException | InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return null;
+        }
+    }
     // Minimal uri used to make the request to the tracker
     public String createMinimalUriString() {
         return announce + '?' +
                 "info_hash=" + Utils.byteArrayToURLString(info_hash) + '&' +
                 "peer_id=" + Utils.byteArrayToURLString(peer_id) + '&' +
-                "port=" + Integer.valueOf(port).toString();
+                "port=" + Integer.valueOf(port).toString() + '&' + 
+                "compact=1";
+    }
+
+    // Complete uri used to make the request to the tracker
+    public String createCompleteUriString() {
+        return announce + '?' +
+                "info_hash=" + Utils.byteArrayToURLString(info_hash) + '&' +
+                "peer_id=" + Utils.byteArrayToURLString(peer_id) + '&' +
+                "port=" + Integer.valueOf(port).toString() + '&' +
+                "left=0" + '&' + "compact=1"; 
     }
 
     // Used for testing purposes, so that we can generate repeatable client IDS
@@ -75,6 +118,14 @@ public class TrackerConnect {
         // If we have no tracker info, we request it from the tracker
         if (trackerInfo == null) {
             trackerInfo = new TrackerInfo(trackerRequest().body());
+        }
+        return trackerInfo;
+    }
+
+    public TrackerInfo iHaveTheFullFile() {
+        // If we have no tracker info, we request it from the tracker
+        if (trackerInfo == null) {
+            trackerInfo = new TrackerInfo(trackerRequestComplete().body());
         }
         return trackerInfo;
     }
