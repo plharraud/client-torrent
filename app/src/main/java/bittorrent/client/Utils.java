@@ -1,5 +1,6 @@
 package bittorrent.client;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.URLEncoder;
@@ -123,4 +124,13 @@ public class Utils {
         bytes[0] = (byte) ((value >> 24) & 0xff);
         return bytes;
     }
+
+    public static String getFileExtension(String name) {
+        int lastIndexOf = name.lastIndexOf(".");
+        if (lastIndexOf == -1) {
+            return ""; // empty extension
+        }
+        return name.substring(lastIndexOf);
+    }
+
 }
