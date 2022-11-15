@@ -39,6 +39,10 @@ public class Unchoke {
         }
     }
 
+    public void verifyUnchokeIntegrity (){
+        if(type != 1) System.out.println("Bad Unchoke");
+    }
+
     public int getLength() {
         return this.length;
     }

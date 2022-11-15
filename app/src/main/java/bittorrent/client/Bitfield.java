@@ -54,6 +54,14 @@ public class Bitfield {
         }
     }
 
+    public void extractDataToArray(){
+
+    }
+
+    public void verifyBitfieldIntegrity (){
+       if(type != 5) System.out.println("Bad BitField");
+    }
+
     public int getLength() {
         return this.length;
     }

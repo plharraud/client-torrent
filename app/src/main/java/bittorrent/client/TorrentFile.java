@@ -15,6 +15,7 @@ public class TorrentFile {
     private int last_piece_parts;
     private int last_block_size;
     private Piece[] torrentFile;
+    private ByteArrayOutputStream imagebytes;
 
     public TorrentFile(int length, int piecelength) {
         this.length = length;
@@ -51,19 +52,18 @@ public class TorrentFile {
         torrentFile[piece.getIndex()] = piece;
     }
 
-    public void generateFile() {
-        try {
-            ByteArrayOutputStream imagebytes = new ByteArrayOutputStream();
-            for (int i = 0; i < piece_parts; i++) {
-                torrentFile[i].writePiece(imagebytes);
-            }
-            bytesToJPG(imagebytes);
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void generateJPG(){
+        writeFullBytes();
+        bytesToJPG();
+    }
+    public void writeFullBytes(){
+        imagebytes = new ByteArrayOutputStream();
+        for (int i = 0; i < piece_parts; i++) {
+            torrentFile[i].writePiece(imagebytes);
         }
     }
 
-    public void bytesToJPG(ByteArrayOutputStream imagebytes) {
+    public void bytesToJPG() {
         try (OutputStream out = new BufferedOutputStream(
                 new FileOutputStream("src/test/results/test.jpg"))) {
             out.write(imagebytes.toByteArray());
@@ -81,4 +81,9 @@ public class TorrentFile {
             return 1;
         }
     }
+
+    public byte[] getImageBytesAray() {
+        return imagebytes.toByteArray();
+    }
+
 }

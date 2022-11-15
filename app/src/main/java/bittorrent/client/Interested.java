@@ -23,4 +23,8 @@ public class Interested {
             e.printStackTrace();
         }
     }
+
+    public void verifyInterestedIntegrity(){
+        if(length != 1 || type != 2) System.out.println("Error Interested Reception");
+    }
 }
