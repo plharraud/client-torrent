@@ -17,6 +17,7 @@ public class Handshake {
         this.extension = extension;
         this.info_hash = info_hash;
         this.peer_id = peer_id;
+        verifyHandshakeIntegrity(info_hash);
     }
 
     public Handshake(DataInputStream in) throws IOException {
@@ -33,11 +34,12 @@ public class Handshake {
             in.read(hash);
             in.read(peerid);
 
-            setName_length(Utils.byteArrayToUnsignedInt(name_leng));
-            setName(new String(nameb));
-            setExtension(extension);
-            setInfo_hash(hash);
-            setPeer_id(peerid);
+            this.name_length = Utils.byteArrayToUnsignedInt(name_leng);
+            this.name = new String(nameb);
+            this.extension = extension;
+            this.info_hash = hash;
+            this.peer_id = peerid;
+            verifyHandshakeIntegrity(hash);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -45,11 +47,11 @@ public class Handshake {
 
     public void sendHandshake(DataOutputStream out) throws IOException {
         try {
-            out.writeByte(name_length);
-            out.writeBytes(name);
-            out.write(extension);
-            out.write(info_hash);
-            out.write(peer_id);
+            out.writeByte(getName_length());
+            out.writeBytes(getName());
+            out.write(getExtension());
+            out.write(getInfo_hash());
+            out.write(getPeer_id());
             if (out.size() != 68) {
                 System.out
                         .println("TAILLE BUFFER INCOHERENTE HANDSHAKE : " + out.size());

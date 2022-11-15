@@ -1,11 +1,7 @@
 package bittorrent.client;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.nio.file.Files;
 
 public class TorrentFile {
     final int maxsizepacket = 16384;
@@ -46,6 +42,15 @@ public class TorrentFile {
         Piece piecefinal = new Piece(data_in, data_out, piece_parts - 1, last_piece_parts, last_block_size);
         addPiece(piecefinal);
         System.out.println("✔ Leeching 100% complete");
+    }
+
+    public byte[] convertJPGtoBytes(File jpg){
+        try {
+            byte[] fileContent = Files.readAllBytes(jpg.toPath());
+            return fileContent;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void addPiece(Piece piece) {

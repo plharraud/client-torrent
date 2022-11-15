@@ -1,11 +1,7 @@
 package bittorrent.client;
 
+import java.io.*;
 import java.net.Socket;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 
 public class Leecher {
 
@@ -55,8 +51,19 @@ public class Leecher {
             // Collect all pieces and place it in a buffer
             TorrentFile file = new TorrentFile(torrent.getLength(), torrent.getPiece_length());
             file.Leeching100(data_in, data_out);
+            file.generateJPG();
+            String trollGenere = Utils.bytesToHex(file.getImageBytesAray());
+            String trollSource = Utils.bytesToHex(file.convertJPGtoBytes(new File("src/test/resources/jpg/4K.jpg")));
+            PrintWriter sortieGenere = new PrintWriter("src/test/resources/jpg/genere.txt");
+            PrintWriter sortieSource = new PrintWriter("src/test/resources/jpg/source.txt");
+            sortieGenere.println(trollGenere);
+            sortieSource.println(trollSource);
 
-            file.generateFile();
+
+
+            System.out.println("Comparaison des JPG");
+            System.out.println(trollSource.equals(trollGenere));
+
 
             System.out.println("Closing the socket");
             socket.close(); // Close the socket and its streams
