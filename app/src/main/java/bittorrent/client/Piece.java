@@ -10,13 +10,14 @@ public class Piece {
     final int maxsizepacket = 16384;
     PieceBlock[] piece;
     byte[] piecesConcat;
-    int parts = 2;
+    int parts;
     int index;
 
     public Piece(DataInputStream data_in, DataOutputStream data_out, int index) {
         try {
             this.index = index;
-            piece = new PieceBlock[2];
+            this.parts = 2;
+            piece = new PieceBlock[this.parts];
             for (int i = 0; i < 2; i++) {
                 piece[i] = new PieceBlock(data_in, data_out, index, i, maxsizepacket);
             }

@@ -5,16 +5,19 @@ import java.io.*;
 public class Handshake {
 
     // 1/19/8/20/20 = 68
-    private int name_length = 19;
-    private String name = "BitTorrent protocol";
+    private int name_length;
+    private String name;
     private byte[] extension;
     private byte[] info_hash;
     private byte[] peer_id;
 
     public Handshake(byte[] extension, byte[] info_hash, byte[] peer_id) {
+        this.name_length = 19;
+        this.name = "BitTorrent protocol";
         this.extension = extension;
         this.info_hash = info_hash;
         this.peer_id = peer_id;
+        verifyHandshakeIntegrity(info_hash);
     }
 
     public Handshake(DataInputStream in) throws IOException {
@@ -31,11 +34,12 @@ public class Handshake {
             in.read(hash);
             in.read(peerid);
 
-            setName_length(Utils.byteArrayToUnsignedInt(name_leng));
-            setName(new String(nameb));
-            setExtension(extension);
-            setInfo_hash(hash);
-            setPeer_id(peerid);
+            this.name_length = Utils.byteArrayToUnsignedInt(name_leng);
+            this.name = new String(nameb);
+            this.extension = extension;
+            this.info_hash = hash;
+            this.peer_id = peerid;
+            verifyHandshakeIntegrity(hash);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -43,11 +47,11 @@ public class Handshake {
 
     public void sendHandshake(DataOutputStream out) throws IOException {
         try {
-            out.writeByte(name_length);
-            out.writeBytes(name);
-            out.write(extension);
-            out.write(info_hash);
-            out.write(peer_id);
+            out.writeByte(getName_length());
+            out.writeBytes(getName());
+            out.write(getExtension());
+            out.write(getInfo_hash());
+            out.write(getPeer_id());
             if (out.size() != 68) {
                 System.out
                         .println("TAILLE BUFFER INCOHERENTE HANDSHAKE : " + out.size());
@@ -56,6 +60,19 @@ public class Handshake {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public int verifyHandshakeIntegrity(byte[] actual_info_hash){
+        if(getName_length() != 19 || !getName().equals("BitTorrent protocol")){
+            System.out.println("1 : Is not a valid BitTorrent protocol");
+            return 1;
+        }
+        if(getInfo_hash() != actual_info_hash){
+            System.out.println("2 : Wrong info hash");
+            return 2;
+        }
+        System.out.println("0 : Valid Handshake");
+        return 0;
     }
 
     public int getName_length() {

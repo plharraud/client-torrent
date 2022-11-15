@@ -27,6 +27,7 @@ public class Torrent {
 
 	private Integer piece_length;
 	private String pieces;
+	private Integer pieces_number;
 
 	public Torrent() {
 	}
@@ -43,6 +44,7 @@ public class Torrent {
 			infoMap = document.get("info").getMap();
 			parseInfoMap(infoMap);
 			computeInfoHash(infoMap);
+			this.pieces_number = (int) Math.ceil((float) length / (float) piece_length);
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -102,6 +104,10 @@ public class Torrent {
 
 	public String getPieces() {
 		return pieces;
+	}
+
+	public Integer getNumberOfPieces(){
+		return pieces_number;
 	}
 
 }

@@ -1,11 +1,7 @@
 package bittorrent.client;
 
+import java.io.*;
 import java.net.Socket;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 
 public class Leecher {
 
@@ -35,8 +31,9 @@ public class Leecher {
             System.out.println(handresp.toString());
 
             // BITFIELD <===
-            byte[] bitfield = new byte[7];
-            data_in.read(bitfield);
+            Bitfield  bitfield = new Bitfield(data_in);
+            System.out.println("Bitfield received : ");
+            System.out.println(bitfield.toString());
 
             // BITFIELD ===>
             Bitfield Bitf = new Bitfield();
@@ -47,13 +44,26 @@ public class Leecher {
             Inti.sendSeq(data_out);
 
             // UNCHOKE <===
-            byte[] unchoketest = new byte[5];
-            data_in.read(unchoketest);
+            Unchoke unchoketest = new Unchoke(data_in);
+            System.out.println("Unchoke received : ");
+            System.out.println(unchoketest.toString());
 
             // Collect all pieces and place it in a buffer
             TorrentFile file = new TorrentFile(torrent.getLength(), torrent.getPiece_length());
             file.Leeching100(data_in, data_out);
-            file.generateFile();
+            file.generateJPG();
+            String trollGenere = Utils.bytesToHex(file.getImageBytesAray());
+            String trollSource = Utils.bytesToHex(file.convertJPGtoBytes(new File("src/test/resources/jpg/4K.jpg")));
+            PrintWriter sortieGenere = new PrintWriter("src/test/resources/jpg/genere.txt");
+            PrintWriter sortieSource = new PrintWriter("src/test/resources/jpg/source.txt");
+            sortieGenere.println(trollGenere);
+            sortieSource.println(trollSource);
+
+
+
+            System.out.println("Comparaison des JPG");
+            System.out.println(trollSource.equals(trollGenere));
+
 
             System.out.println("Closing the socket");
             socket.close(); // Close the socket and its streams

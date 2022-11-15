@@ -1,11 +1,7 @@
 package bittorrent.client;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.nio.file.Files;
 
 public class TorrentFile {
     final int maxsizepacket = 16384;
@@ -15,6 +11,7 @@ public class TorrentFile {
     private int last_piece_parts;
     private int last_block_size;
     private Piece[] torrentFile;
+    private ByteArrayOutputStream imagebytes;
 
     public TorrentFile(int length, int piecelength) {
         this.length = length;
@@ -47,23 +44,31 @@ public class TorrentFile {
         System.out.println("✔ Leeching 100% complete");
     }
 
+    public byte[] convertJPGtoBytes(File jpg){
+        try {
+            byte[] fileContent = Files.readAllBytes(jpg.toPath());
+            return fileContent;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void addPiece(Piece piece) {
         torrentFile[piece.getIndex()] = piece;
     }
 
-    public void generateFile() {
-        try {
-            ByteArrayOutputStream imagebytes = new ByteArrayOutputStream();
-            for (int i = 0; i < piece_parts; i++) {
-                torrentFile[i].writePiece(imagebytes);
-            }
-            bytesToJPG(imagebytes);
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void generateJPG(){
+        writeFullBytes();
+        bytesToJPG();
+    }
+    public void writeFullBytes(){
+        imagebytes = new ByteArrayOutputStream();
+        for (int i = 0; i < piece_parts; i++) {
+            torrentFile[i].writePiece(imagebytes);
         }
     }
 
-    public void bytesToJPG(ByteArrayOutputStream imagebytes) {
+    public void bytesToJPG() {
         try (OutputStream out = new BufferedOutputStream(
                 new FileOutputStream("src/test/results/test.jpg"))) {
             out.write(imagebytes.toByteArray());
@@ -81,4 +86,9 @@ public class TorrentFile {
             return 1;
         }
     }
+
+    public byte[] getImageBytesAray() {
+        return imagebytes.toByteArray();
+    }
+
 }
