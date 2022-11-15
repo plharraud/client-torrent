@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.util.Arrays;
 
 public class Seeder {
 
@@ -36,10 +37,14 @@ public class Seeder {
             // HANDSHAKE ===>
             Handshake handresp = new Handshake(new byte[8], torrent.getInfo_hash(), peer_id);
             handresp.sendHandshake(data_out);
+            System.out.println("Handshake response : \n" + handresp);
 
             // BITFIELD <===
             byte[] bitfield = new byte[7];
             data_in.read(bitfield);
+            System.out.println(Arrays.toString(bitfield));
+
+
 
 
         } catch (IOException e) {
