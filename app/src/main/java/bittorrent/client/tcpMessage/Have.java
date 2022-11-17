@@ -21,4 +21,10 @@ public class Have extends BittorrentMessage{
         super.build(out);
         out.writeInt(pieceIndex);
     }
+
+    @Override
+    public String toString() {
+        return "Have ["+super.toString()+", pieceIndex=" + pieceIndex + "]";
+    }
+    
 }

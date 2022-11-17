@@ -18,5 +18,11 @@ public class Choke extends BittorrentMessage {
     public void build(DataOutputStream out) throws IOException {
        super.build(out);
     }
+
+
+    @Override
+    public String toString() {
+        return "Choke ["+super.toString()+"]";
+    }
     
 }

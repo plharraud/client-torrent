@@ -29,4 +29,12 @@ public class Request extends BittorrentMessage {
         out.writeInt(pieceBeginOffset);
         out.writeInt(pieceLength);
     }
+
+    @Override
+    public String toString() {
+        return "Request ["+super.toString()+", pieceIndex=" + pieceIndex + ", pieceBeginOffset=" + pieceBeginOffset + ", pieceLength="
+                + pieceLength + "]";
+    }
+
+    
 }

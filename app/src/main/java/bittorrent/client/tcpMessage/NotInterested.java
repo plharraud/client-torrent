@@ -17,4 +17,9 @@ public class NotInterested extends BittorrentMessage {
     public void build(DataOutputStream out) throws IOException {
         super.build(out);
     }
+
+    @Override
+    public String toString() {
+        return "NotInterested ["+super.toString()+"]";
+    }
 }

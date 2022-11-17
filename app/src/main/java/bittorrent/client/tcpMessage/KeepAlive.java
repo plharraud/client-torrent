@@ -17,4 +17,9 @@ public class KeepAlive extends BittorrentMessage {
     public void build(DataOutputStream out) throws IOException {
         out.writeInt(0);
     }
+
+    @Override
+    public String toString() {
+        return "KeepAlive ["+super.toString()+"]";
+    }
 }

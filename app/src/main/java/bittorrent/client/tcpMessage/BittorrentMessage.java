@@ -5,7 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 
-public abstract class BittorrentMessage implements IBittorentMessageBuilder, IBittorentMessageHandler {
+public class BittorrentMessage implements IBittorentMessageBuilder, IBittorentMessageHandler {
     DataInputStream dataInput;
     int messageLength;
     int messageType;
@@ -110,6 +110,7 @@ public abstract class BittorrentMessage implements IBittorentMessageBuilder, IBi
 
     @Override
     public String toString() {
-        return "messageLength = " + messageLength + "`\n messageType = " + messageType;
+        return "messageLength=" + messageLength + ", messageType=" + messageType;
     }
+
 }

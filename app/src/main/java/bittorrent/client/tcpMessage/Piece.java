@@ -2,6 +2,7 @@ package bittorrent.client.tcpMessage;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class Piece extends BittorrentMessage {
     int pieceIndex;
@@ -29,4 +30,12 @@ public class Piece extends BittorrentMessage {
         out.writeInt(pieceBeginOffset);
         out.write(pieceBlock);
     }
+
+    @Override
+    public String toString() {
+        return "Piece ["+super.toString()+", pieceIndex=" + pieceIndex + ", pieceBeginOffset=" + pieceBeginOffset + ", pieceBlock="
+                + Arrays.toString(pieceBlock) + "]";
+    }
+
+    
 }
