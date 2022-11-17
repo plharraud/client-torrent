@@ -31,5 +31,11 @@ public class Cancel extends BittorrentMessage {
         out.writeInt(pieceBeginOffset);
         out.writeInt(pieceLength);
     }
+
+    @Override
+    public String toString() {
+        return "Cancel ["+super.toString()+", pieceIndex=" + pieceIndex + ", pieceBeginOffset=" + pieceBeginOffset + ", pieceLength="
+                + pieceLength + "]";
+    }
     
 }

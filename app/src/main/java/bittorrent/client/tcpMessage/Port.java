@@ -25,4 +25,12 @@ public class Port extends BittorrentMessage {
         super.build(out);
         out.writeChar(listenPort);
     }
+
+
+
+    @Override
+    public String toString() {
+        return "Port ["+super.toString()+", listenPort=" + listenPort + "]";
+    }
+    
 }

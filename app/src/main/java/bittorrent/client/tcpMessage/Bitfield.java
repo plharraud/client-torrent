@@ -3,38 +3,39 @@ package bittorrent.client.tcpMessage;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.BitSet;
-
+import java.util.Arrays;
 
 public class Bitfield extends BittorrentMessage {
-    BitSet bitfield;
+    byte[] bitfield;
 
     Bitfield(DataInputStream dataInput) throws IOException{
         super(dataInput);
-        this.bitfield =  BitSet.valueOf(dataInput.readAllBytes());
+        this.bitfield =  dataInput.readAllBytes();
     }
 
-    Bitfield(BitSet bitfield) {
-        super(1 + bitfield.toByteArray().length, 5);
+    Bitfield(byte[] bitfield) {
+        super(1 + bitfield.length, 5);
         this.bitfield = bitfield;
     }
 
     Bitfield(BittorrentMessage bittorrentMessage) throws IOException {
         super(bittorrentMessage);
-        this.bitfield =  BitSet.valueOf(bittorrentMessage.dataInput.readAllBytes());
-    }
-
-    public Boolean isPieceAvailable(int index) {
-        return bitfield.get(index);
+        this.bitfield =  bittorrentMessage.dataInput.readAllBytes();
     }
 
     @Override
     public void build(DataOutputStream out) throws IOException {
         super.build(out);
-        out.write(bitfield.toByteArray());
+        out.write(bitfield);
     }
     @Override
     public void handle() {
         // TODO : Add a handle method to the Bitfield message
     }
+
+    @Override
+    public String toString() {
+        return "Bitfield ["+super.toString()+", bitfield=" + Arrays.toString(bitfield) + "]";
+    }
+    
 }
