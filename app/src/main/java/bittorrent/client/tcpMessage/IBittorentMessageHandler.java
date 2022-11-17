@@ -1,6 +1,8 @@
 package bittorrent.client.tcpMessage;
 
 public interface IBittorentMessageHandler {
-    // Handle the message , what's executed upon message reception
+    /**
+     * Handles the message. To be called after a message has been identified, to have a proper handling.
+     */
     public void handle();
 }
