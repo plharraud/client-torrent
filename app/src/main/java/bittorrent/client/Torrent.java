@@ -31,7 +31,7 @@ public class Torrent {
 	private String pieces;
 	private Integer pieces_number;
 
-	private String FlileName;
+	private String FileName;
 
 	public Torrent() {
 	}
@@ -50,10 +50,6 @@ public class Torrent {
 			computeInfoHash(infoMap);
 			this.pieces_number = (int) Math.ceil((float) length / (float) piece_length);
 
-			// Get the filename without the '.torrent'
-			Pattern pattern = Pattern.compile("(.*)\\.torrent");
-			Matcher m = pattern.matcher(file.getName());
-			this.FlileName = m.group(1);
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -117,6 +113,10 @@ public class Torrent {
 
 	public Integer getNumberOfPieces(){
 		return pieces_number;
+	}
+
+	public String getFileName() {
+		return FileName;
 	}
 
 }

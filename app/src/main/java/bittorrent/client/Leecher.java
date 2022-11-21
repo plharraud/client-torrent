@@ -51,22 +51,7 @@ public class Leecher {
             // Collect all pieces and place it in a buffer
             TorrentFile file = new TorrentFile(torrent.getLength(), torrent.getPiece_length());
             file.Leeching100(data_in, data_out);
-            String extension = Utils.getFileExtension(torrent.getName());
-            System.out.println(extension);
-            file.generateFile(extension);
-            String trollGenere = Utils.bytesToHex(file.getImageBytesAray());
-            String trollSource = Utils.bytesToHex(file.convertJPGtoBytes(new File("src/test/resources/jpg/4K.jpg")));
-            PrintWriter sortieGenere = new PrintWriter("src/test/resources/jpg/genere.txt");
-            PrintWriter sortieSource = new PrintWriter("src/test/resources/jpg/source.txt");
-            sortieGenere.println(trollGenere);
-            sortieSource.println(trollSource);
-
-
-
-
-
-            System.out.println("Comparaison des JPG");
-            System.out.println(trollSource.equals(trollGenere));
+            file.generateFile(torrent.getName());
 
 
             System.out.println("Closing the socket");
