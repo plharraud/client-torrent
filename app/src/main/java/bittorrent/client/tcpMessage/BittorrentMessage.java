@@ -95,6 +95,10 @@ public class BittorrentMessage implements IBittorentMessageBuilder, IBittorentMe
 
     }
 
+    public BittorrentMessageType getMessageType() {
+        return BittorrentMessageType.INT_TO_MESSAGE_TYPE_MAP.get(this.messageType);
+    }
+
     @Override
     public void build(DataOutputStream out) throws IOException {
         out.writeInt(messageLength);

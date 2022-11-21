@@ -8,19 +8,22 @@ import java.util.Arrays;
 public class Bitfield extends BittorrentMessage {
     byte[] bitfield;
 
-    Bitfield(DataInputStream dataInput) throws IOException{
+    public Bitfield(DataInputStream dataInput) throws IOException{
         super(dataInput);
-        this.bitfield =  dataInput.readAllBytes();
+        this.bitfield = new byte[super.messageLength -1];
+        dataInput.read(this.bitfield);
     }
 
-    Bitfield(byte[] bitfield) {
+    public Bitfield(byte[] bitfield) {
         super(1 + bitfield.length, 5);
         this.bitfield = bitfield;
     }
 
-    Bitfield(BittorrentMessage bittorrentMessage) throws IOException {
+    public Bitfield(BittorrentMessage bittorrentMessage) throws IOException {
         super(bittorrentMessage);
-        this.bitfield =  bittorrentMessage.dataInput.readAllBytes();
+        // Calculate the size of the bytes to read
+        this.bitfield = new byte[bittorrentMessage.messageLength -1];
+        bittorrentMessage.dataInput.read(this.bitfield);
     }
 
     @Override
@@ -36,6 +39,10 @@ public class Bitfield extends BittorrentMessage {
     @Override
     public String toString() {
         return "Bitfield ["+super.toString()+", bitfield=" + Arrays.toString(bitfield) + "]";
+    }
+
+    public byte[] getBitfield() {
+        return bitfield;
     }
     
 }
