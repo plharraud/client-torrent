@@ -12,6 +12,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FilenameUtils;
+
 import be.adaxisoft.bencode.BDecoder;
 import be.adaxisoft.bencode.BEncodedValue;
 import be.adaxisoft.bencode.BEncoder;
@@ -31,7 +33,7 @@ public class Torrent {
 	private String pieces;
 	private Integer pieces_number;
 
-	private String FlileName;
+	private String FileName;
 
 	public Torrent() {
 	}
@@ -50,10 +52,7 @@ public class Torrent {
 			computeInfoHash(infoMap);
 			this.pieces_number = (int) Math.ceil((float) length / (float) piece_length);
 
-			// Get the filename without the '.torrent'
-			Pattern pattern = Pattern.compile("(.*)\\.torrent");
-			Matcher m = pattern.matcher(file.getName());
-			this.FlileName = m.group(1);
+			this.FileName = FilenameUtils.getBaseName(file.getName());
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);
