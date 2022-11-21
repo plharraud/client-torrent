@@ -57,21 +57,21 @@ public class Seeder {
 
             // BITFIELD <===
             BittorrentMessage bitfield = (new BittorrentMessage(data_in)).identify();
-            System.out.println("Leacher bitfield :\n" + bitfield);
+            System.out.println("<=== " + bitfield);
 
             // BITFIELD ===>
             Bitfield seederBitfield = new Bitfield(Utils.hexStringToByteArray("ffffff80"));
-            System.out.println("Seeder bitfiled :\n" + seederBitfield);
+            System.out.println("===> " + seederBitfield);
             seederBitfield.build(data_out);
             data_out.flush();
 
             // INTERESTED <===
             BittorrentMessage interested = new BittorrentMessage(data_in).identify();
-            System.out.println("Leacher interested :\n" + interested);
+            System.out.println("<=== " + interested);
 
             // UNCHOKE ===>
             Unchocke seederUnchocke = new Unchocke();
-            System.out.println("Seeder bitfiled :\n" + seederUnchocke);
+            System.out.println("===> " + seederUnchocke);
             seederUnchocke.build(data_out);
 
             // REQUEST <=<=<=<=<===
@@ -80,7 +80,7 @@ public class Seeder {
                 switch(incomingMessage.getMessageType()){
                     case REQUEST:
                         Request request = (Request)incomingMessage;
-                        System.out.println(request);
+                        System.out.println("<=== " + request);
                         // Handle the request by sending a piece message
                         // Select the piece from the file
                         int from = request.getPieceIndex() * torrent.getPiece_length() + request.getPieceBeginOffset();
@@ -89,12 +89,12 @@ public class Seeder {
                         assert piece.length == request.getPieceLength();
                         // Create the message:
                         Piece pieceMessage = new Piece(request.getPieceIndex(), request.getPieceBeginOffset(), piece);
-                        System.out.println("Sending piece : \n" + pieceMessage);
+                        System.out.println("===> " + pieceMessage);
                         pieceMessage.build(data_out);
                         data_out.flush();
                         break;
                     default:
-                        System.out.println(incomingMessage);
+                        System.out.println("<=== " + incomingMessage);
                         break;
 
                 }

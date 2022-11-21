@@ -33,8 +33,6 @@ public class Torrent {
 	private String pieces;
 	private Integer pieces_number;
 
-	private String FileName;
-
 	public Torrent() {
 	}
 	
@@ -51,8 +49,6 @@ public class Torrent {
 			parseInfoMap(infoMap);
 			computeInfoHash(infoMap);
 			this.pieces_number = (int) Math.ceil((float) length / (float) piece_length);
-
-			this.FileName = FilenameUtils.getBaseName(file.getName());
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);

@@ -6,10 +6,17 @@ package bittorrent.client;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.cli.*;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+
 public class App {
 
-    public boolean DEBUG = false;
-    public boolean INFO = false;
+    public static boolean DEBUG = false;
+    public static boolean INFO = false;
+    public static boolean SEEDING = false;
+    public static final int DEFAULT_PORT = 6685;
+
     //TODO: lancer app depuis une nouvelle classe main
 
     public static void main(String[] args) {
@@ -20,15 +27,20 @@ public class App {
 
             CommandLineParser cliParser = new DefaultParser();
             CommandLine cliCmd = cliParser.parse(cliOptions, args);
-            if (cliCmd.hasOption("debug")) {
-                //this.DEBUG = true;
-            }
-            if (cliCmd.hasOption("info")) {
-                
-            }
+        
+            // if (cliCmd.hasOption("debug")) {
+            //     App.DEBUG = true;
+            // }
+            // if (cliCmd.hasOption("info")) {
+            //     App.INFO = true;
+            // }
+            // if (cliCmd.hasOption("seed")) {
+            //     App.SEEDING = true;
+            // }
+
             String[] cliArgs = cliCmd.getArgs();
             
-            if (cliArgs.length != 2) {
+            if (cliArgs.length != 2 && !App.SEEDING) {
                 throw new CLIException("specify .torrent file and destination directory");
             }
 
@@ -39,6 +51,10 @@ public class App {
                 throw new CLIException(torrentFilePath + " is not a .torrent file");
             }
 
+            File torrentFile = new File(torrentFilePath);
+            if (! torrentFile.exists()) {
+                throw new CLIException(torrentFilePath + " does not exist");
+            }
 
             File destinationFile = new File(destinationPath);
             if (! destinationFile.isDirectory()) {
@@ -47,17 +63,30 @@ public class App {
 
             Torrent torrent = new Torrent(torrentFile);
             // Then, we get the tracker's informations
-            TrackerConnect tc = new TrackerConnect(torrent);
-            TrackerInfo info = tc.getTrackerInfo();
-            byte[] selfPeerId = tc.getPeer_id();
+            TrackerConnect tc = new TrackerConnect(torrent,DEFAULT_PORT);
 
-            System.out.println("peers:");
-            for (int i = 1; i < info.peersList.size(); i++) {
-                Peer peer = info.peersList.get(i);
-                System.out.println(peer.getIp().toString() +":"+ peer.getPort());
-                //TODO multithread et choix des peers
-                new LeechingFull().leech(torrent, selfPeerId, peer);
+            // Check if the file is in the specified directory
+            String downloadedFile = FilenameUtils.concat(destinationPath, torrent.getName());
+            if ( (new File(downloadedFile)).exists()) {
+                // Seed the file
+                TrackerInfo info = tc.iHaveTheFullFile();
+                System.out.println(info);
+                new Seeder().seed(torrent, DEFAULT_PORT,tc.getPeer_id());
+            } else {
+                // Start leeching
+                TrackerInfo info = tc.getTrackerInfo();
+                byte[] selfPeerId = tc.getPeer_id();
+                System.out.println("peers:");
+                for (int i = 1; i < info.peersList.size(); i++) {
+                    Peer peer = info.peersList.get(i);
+                    System.out.println(peer.getIp().toString() +":"+ peer.getPort());
+                    //TODO multithread et choix des peers
+                    new Leecher().leech(torrent, selfPeerId, peer);
+                }
             }
+
+
+
 
         } catch (CLIException e) {
             System.err.println(e.getMessage());
