@@ -1,7 +1,14 @@
+
+.vscode
 # Ignore Gradle project-specific cache directory
 .gradle
 # Ignore Gradle build output directory
+gradle-user-home
 build
 bin
 #Ignore result file
 test.jpg
+#Ignore the personalTorrents Folder
+app/src/test/personalTorrents
+
+/.metadata/
