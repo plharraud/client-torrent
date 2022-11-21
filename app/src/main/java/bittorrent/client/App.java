@@ -64,7 +64,7 @@ public class App {
                 Peer peer = info.peersList.get(i);
                 System.out.println(peer.getIp().toString() +":"+ peer.getPort());
                 //TODO multithread et choix des peers
-                new LeechingFull().leech(torrent, selfPeerId, peer);
+                new Leecher().leech(torrent, selfPeerId, peer);
             }
 
         } catch (CLIException e) {

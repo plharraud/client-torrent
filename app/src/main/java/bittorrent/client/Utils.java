@@ -100,7 +100,7 @@ public class Utils {
         return deeperByteArray;
     }
 
-    private static byte[] intToBytes(final int data) {
+    public static byte[] intToBytes(final int data) {
         return new byte[] {
                 (byte) ((data >> 24) & 0xff),
                 (byte) ((data >> 16) & 0xff),

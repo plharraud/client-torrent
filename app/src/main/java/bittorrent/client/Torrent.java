@@ -9,6 +9,8 @@ import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import be.adaxisoft.bencode.BDecoder;
 import be.adaxisoft.bencode.BEncodedValue;
@@ -27,6 +29,9 @@ public class Torrent {
 
 	private Integer piece_length;
 	private String pieces;
+	private Integer pieces_number;
+
+	private String FlileName;
 
 	public Torrent() {
 	}
@@ -43,6 +48,12 @@ public class Torrent {
 			infoMap = document.get("info").getMap();
 			parseInfoMap(infoMap);
 			computeInfoHash(infoMap);
+			this.pieces_number = (int) Math.ceil((float) length / (float) piece_length);
+
+			// Get the filename without the '.torrent'
+			Pattern pattern = Pattern.compile("(.*)\\.torrent");
+			Matcher m = pattern.matcher(file.getName());
+			this.FlileName = m.group(1);
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -102,6 +113,10 @@ public class Torrent {
 
 	public String getPieces() {
 		return pieces;
+	}
+
+	public Integer getNumberOfPieces(){
+		return pieces_number;
 	}
 
 }

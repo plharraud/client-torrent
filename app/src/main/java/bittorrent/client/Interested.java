@@ -6,15 +6,13 @@ import java.io.*;
 import java.net.*;
 
 public class Interested {
-    byte[] fill = new byte[3];
-    int length = 1;
-    int type = 2;
+    private int length = 1;
+    private int type = 2;
 
     public void sendSeq(DataOutputStream out) throws IOException {
         try {
             int sizeinit = out.size();
-            out.write(fill);
-            out.writeByte(length);
+            out.writeInt(length);
             out.writeByte(type);
             if (out.size() - sizeinit != 5) {
                 System.out
@@ -22,8 +20,11 @@ public class Interested {
             }
             out.flush();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+
+    public void verifyInterestedIntegrity(){
+        if(length != 1 || type != 2) System.out.println("Error Interested Reception");
     }
 }
