@@ -27,9 +27,10 @@ public class Bitfield extends BittorrentMessage {
     }
 
     @Override
-    public void build(DataOutputStream out) throws IOException {
-        super.build(out);
+    public void send(DataOutputStream out) throws IOException {
+        super.send(out);
         out.write(bitfield);
+        out.flush();
     }
     @Override
     public void handle() {

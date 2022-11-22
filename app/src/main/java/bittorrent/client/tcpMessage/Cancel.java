@@ -23,11 +23,12 @@ public class Cancel extends BittorrentMessage {
     }
 
     @Override
-    public void build(DataOutputStream out) throws IOException {
-        super.build(out);
+    public void send(DataOutputStream out) throws IOException {
+        super.send(out);
         out.writeInt(pieceIndex);
         out.writeInt(pieceBeginOffset);
         out.writeInt(pieceLength);
+        out.flush();
     }
 
     @Override

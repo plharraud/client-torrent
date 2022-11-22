@@ -63,8 +63,7 @@ public class Seeder {
             // BITFIELD ===>
             Bitfield seederBitfield = new Bitfield(Utils.hexStringToByteArray("ffffff80"));
             System.out.println("===> " + seederBitfield);
-            seederBitfield.build(data_out);
-            data_out.flush();
+            seederBitfield.send(data_out);
 
             // INTERESTED <===
             BittorrentMessage interested = new BittorrentMessage(data_in).identify();
@@ -74,7 +73,7 @@ public class Seeder {
             // UNCHOKE ===>
             Unchocke seederUnchocke = new Unchocke();
             System.out.println("===> " + seederUnchocke);
-            seederUnchocke.build(data_out);
+            seederUnchocke.send(data_out);
 
             // REQUEST <=<=<=<=<===
             while(true){
@@ -92,8 +91,7 @@ public class Seeder {
                         // Create the message:
                         Piece pieceMessage = new Piece(request.getPieceIndex(), request.getPieceBeginOffset(), piece);
                         System.out.println("===> " + pieceMessage);
-                        pieceMessage.build(data_out);
-                        data_out.flush();
+                        pieceMessage.send(data_out);
                         break;
                     case NOT_INTERESTED:
                         clientInterested = false;
