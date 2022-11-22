@@ -86,7 +86,7 @@ public class BittorrentMessage implements IBittorentMessageSender, IBittorentMes
                 identifiedMessage = new Request(this);
                 break;
             case UNCHOKE:
-                identifiedMessage = new Unchocke(this);
+                identifiedMessage = new Unchoke(this);
                 break;
             default:
                 break;

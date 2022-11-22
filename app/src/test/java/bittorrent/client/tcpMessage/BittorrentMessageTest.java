@@ -61,7 +61,7 @@ public class BittorrentMessageTest {
         try {
             DataInputStream bitfieldInputStream = new DataInputStream(new ByteArrayInputStream(validUnchokeMessage));
             BittorrentMessage message = new BittorrentMessage(bitfieldInputStream).identify();
-            assertEquals(Unchocke.class,message.getClass());
+            assertEquals(Unchoke.class,message.getClass());
             assertEquals(1,message.messageLength);
             assertEquals(1,message.messageType);
         } catch (IOException e) {
