@@ -16,6 +16,12 @@ public class App {
     public static boolean INFO = false;
     public static boolean SEEDING = false;
     public static final int DEFAULT_PORT = 6685;
+    public static final String PATHNAME = "src/test/resources/torrents/CuteTogepi.jpg.torrent";
+    public static final String PATHNAMEICEBERG = "src/test/resources/torrents/iceberg.jpg.torrent";
+    public static final String PATHNAMETROLL = "src/test/resources/torrents/troll.jpg.torrent";
+    public static final String PATHNAMEBOEUF= "src/test/resources/torrents/boeufalabiere.jpg.torrent";
+    public static final String PATHNAME4K= "src/test/resources/torrents/Hutton_in_the_Forest_4K.jpg.torrent";
+    public static final String PATHNAMEMP4= "src/test/resources/torrents/yeah.mp4.torrent";
 
     //TODO: lancer app depuis une nouvelle classe main
 
@@ -23,6 +29,17 @@ public class App {
         Options cliOptions = new Options();
         cliOptions.addOption("debug", false, "");
         cliOptions.addOption("info", false, "");
+
+        // TODO : Make a proper CLI program
+        // We start by loading the torrent file
+        Torrent torrent = new Torrent(new File(PATHNAMEMP4));
+        // Then, we get the tracker's informations
+        TrackerConnect tc = new TrackerConnect(torrent);
+        TrackerInfo info = tc.getTrackerInfo();
+
+        System.out.println(info);
+
+        // TODO : getOtherPeers
         try {
 
             CommandLineParser cliParser = new DefaultParser();

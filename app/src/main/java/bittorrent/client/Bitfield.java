@@ -4,6 +4,7 @@ import java.util.*;
 import java.lang.*;
 import java.io.*;
 import java.net.*;
+import java.nio.ByteBuffer;
 
 public class Bitfield {
 
@@ -14,6 +15,7 @@ public class Bitfield {
     private byte[] typeByte;
     private int type;
     private byte[] data;
+    private BitSet dataBytes; //Use get(index) to get true/false
     
     public Bitfield(DataInputStream bitfield_received) throws IOException{ // Bitfield from another client
         try{
@@ -23,6 +25,7 @@ public class Bitfield {
             this.type = Utils.byteArrayToUnsignedInt(this.typeByte);
             this.data = new byte[this.length - 1];
             bitfield_received.read(this.data);
+            this.dataBytes = BitSet.valueOf(this.data);
         }
         catch(IOException e){
             e.printStackTrace();
@@ -54,12 +57,19 @@ public class Bitfield {
         }
     }
 
-    public void extractDataToArray(){
-
+    public boolean hasPiece(int index){
+        BitSet data = getdataBytes();
+        int offset = index/8; // Se place sur le bon octet
+        int indexLittleEndian = (7 + offset*8) - (index % 8) ; // Converti en little endian sur le bon octet
+        return data.get(indexLittleEndian);
     }
 
     public void verifyBitfieldIntegrity (){
        if(type != 5) System.out.println("Bad BitField");
+    }
+
+    public BitSet getdataBytes(){
+        return this.dataBytes;
     }
 
     public int getLength() {

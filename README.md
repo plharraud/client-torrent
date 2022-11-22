@@ -8,6 +8,8 @@ gradle run
 
 ./opentracker.debug -i 127.0.0.1 -p 6969
 ./opentracker.debug -i <adresse publique|interface loopback> -p 6969
+ps -aux | grep idea
+killall java
 
 ## Testing
 
