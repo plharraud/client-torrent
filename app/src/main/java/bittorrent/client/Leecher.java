@@ -1,7 +1,12 @@
 package bittorrent.client;
 
+import bittorrent.client.tcpMessage.BittorrentMessage;
+import bittorrent.client.tcpMessage.*;
+
 import java.io.*;
 import java.net.Socket;
+
+import bittorrent.client.tcpMessage.Bitfield;
 
 public class Leecher {
 
@@ -31,22 +36,20 @@ public class Leecher {
             System.out.println(handresp.toString());
 
             // BITFIELD <===
-            Bitfield  bitfield = new Bitfield(data_in);
-            System.out.println("Bitfield received : ");
-            System.out.println(bitfield.toString());
+            Bitfield  bitfield_received = (Bitfield) new BittorrentMessage(data_in).identify();
+            System.out.println(bitfield_received);
 
             // BITFIELD ===>
-            Bitfield Bitf = new Bitfield();
-            Bitf.sendBitfield(data_out);
+            Bitfield bitfield_sent = new Bitfield(new byte[2]);
+            bitfield_sent.send(data_out);
 
             // INTERESTED ===>
-            Interested Inti = new Interested();
-            Inti.sendSeq(data_out);
+            Interested interested = new Interested();
+            interested.send(data_out);
 
             // UNCHOKE <===
-            Unchoke unchoketest = new Unchoke(data_in);
-            System.out.println("Unchoke received : ");
-            System.out.println(unchoketest.toString());
+            Unchoke unchoke = (Unchoke) new BittorrentMessage(data_in).identify();
+            System.out.println(unchoke);
 
             // Collect all pieces and place it in a buffer
             TorrentFile file = new TorrentFile(torrent.getLength(), torrent.getPiece_length());

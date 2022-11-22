@@ -35,7 +35,7 @@ application {
     // Define the main class for the application.
     mainClass = 'bittorrent.client.App'
     run {
-        args = ["src/test/personalTorrents/Soleil.png.torrent", "src/test/personalTorrents/"]
+        args = ["src/test/resources/torrents/iceberg.jpg.torrent", "src/test/resources/jpg/"]
     }
 
 }

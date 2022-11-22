@@ -30,15 +30,6 @@ public class App {
         cliOptions.addOption("debug", false, "");
         cliOptions.addOption("info", false, "");
 
-        // TODO : Make a proper CLI program
-        // We start by loading the torrent file
-        Torrent torrent = new Torrent(new File(PATHNAMEMP4));
-        // Then, we get the tracker's informations
-        TrackerConnect tc = new TrackerConnect(torrent);
-        TrackerInfo info = tc.getTrackerInfo();
-
-        System.out.println(info);
-
         // TODO : getOtherPeers
         try {
 
