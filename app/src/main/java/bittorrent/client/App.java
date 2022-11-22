@@ -72,20 +72,33 @@ public class App {
 
             Torrent torrent = new Torrent(torrentFile);
             // Then, we get the tracker's informations
-            TrackerConnect tc = new TrackerConnect(torrent);
-            TrackerInfo info = tc.getTrackerInfo();
-            byte[] selfPeerId = tc.getPeer_id();
+            TrackerConnect tc = new TrackerConnect(torrent,DEFAULT_PORT);
 
-            System.out.println("peers:");
-            for (int i = 1; i < info.peersList.size(); i++) {
-                Peer peer = info.peersList.get(i);
-                System.out.println(peer.getIp().toString() +":"+ peer.getPort());
-                //TODO multithread et choix des peers
-                new Leecher().leech(torrent, selfPeerId, peer);
+            // Check if the file is in the specified directory
+            String downloadedFile = FilenameUtils.concat(destinationPath, torrent.getName());
+            if ( (new File(downloadedFile)).exists()) {
+                // Seed the file
+                TrackerInfo info = tc.iHaveTheFullFile();
+                System.out.println(info);
+                new Seeder().seed(torrent, DEFAULT_PORT,tc.getPeer_id());
+            } else {
+                // Start leeching
+                TrackerInfo info = tc.getTrackerInfo();
+                byte[] selfPeerId = tc.getPeer_id();
+                System.out.println("peers:");
+                for (int i = 1; i < info.peersList.size(); i++) {
+                    Peer peer = info.peersList.get(i);
+                    System.out.println(peer.getIp().toString() +":"+ peer.getPort());
+                    //TODO multithread et choix des peers
+                    new Leecher().leech(torrent, selfPeerId, peer);
+                }
             }
 
+
+
+
         } catch (CLIException e) {
-            log.error(e.getMessage());
+            System.err.println(e.getMessage());
             // HelpFormatter cliHelpFormatter = new HelpFormatter();
             // cliHelpFormatter.printHelp(args[0], cliOptions);
             System.exit(1);

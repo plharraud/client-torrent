@@ -8,5 +8,7 @@ build
 bin
 #Ignore result file
 test.jpg
+#Ignore the personalTorrents Folder
+app/src/test/personalTorrents
 
 /.metadata/

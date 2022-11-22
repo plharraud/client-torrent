@@ -22,6 +22,18 @@ public class Request extends BittorrentMessage {
         this.pieceLength = bittorrentMessage.dataInput.readInt();
     }
 
+    public int getPieceIndex() {
+        return pieceIndex;
+    }
+
+    public int getPieceBeginOffset() {
+        return pieceBeginOffset;
+    }
+
+    public int getPieceLength() {
+        return pieceLength;
+    }
+
     @Override
     public void build(DataOutputStream out) throws IOException {
         super.build(out);

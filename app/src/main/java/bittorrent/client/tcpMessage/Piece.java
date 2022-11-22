@@ -20,7 +20,8 @@ public class Piece extends BittorrentMessage {
         super(bittorrentMessage);
         this.pieceIndex = bittorrentMessage.dataInput.readInt();
         this.pieceBeginOffset = bittorrentMessage.dataInput.readInt();
-        this.pieceBlock = bittorrentMessage.dataInput.readAllBytes();
+        this.pieceBlock = new byte[super.messageLength -9];
+        dataInput.read(this.pieceBlock);
     }
 
     @Override
@@ -33,8 +34,8 @@ public class Piece extends BittorrentMessage {
 
     @Override
     public String toString() {
-        return "Piece ["+super.toString()+", pieceIndex=" + pieceIndex + ", pieceBeginOffset=" + pieceBeginOffset + ", pieceBlock="
-                + Arrays.toString(pieceBlock) + "]";
+        return "Piece ["+super.toString()+", pieceIndex=" + pieceIndex + ", pieceBeginOffset=" + pieceBeginOffset + ", pieceBlockLength="
+                + pieceBlock.length + "]";
     }
 
     

@@ -20,8 +20,6 @@ public class Cancel extends BittorrentMessage {
         this.pieceIndex = bittorrentMessage.dataInput.readInt();
         this.pieceBeginOffset = bittorrentMessage.dataInput.readInt();
         this.pieceLength = bittorrentMessage.dataInput.readInt();
-
-        
     }
 
     @Override
