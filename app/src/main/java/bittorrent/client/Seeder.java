@@ -2,12 +2,7 @@ package bittorrent.client;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.EOFException;
 import java.io.File;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.Console;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -17,9 +12,8 @@ import java.util.Arrays;
 
 import bittorrent.client.tcpMessage.Bitfield;
 import bittorrent.client.tcpMessage.BittorrentMessage;
-import bittorrent.client.tcpMessage.NotInterested;
 import bittorrent.client.tcpMessage.Request;
-import bittorrent.client.tcpMessage.Unchocke;
+import bittorrent.client.tcpMessage.Unchoke;
 import bittorrent.client.tcpMessage.Piece;
 
 public class Seeder {
@@ -71,7 +65,7 @@ public class Seeder {
             Boolean clientInterested = true;
 
             // UNCHOKE ===>
-            Unchocke seederUnchocke = new Unchocke();
+            Unchoke seederUnchocke = new Unchoke();
             System.out.println("===> " + seederUnchocke);
             seederUnchocke.send(data_out);
 
