@@ -36,9 +36,8 @@ public class Leecher {
             System.out.println(handresp.toString());
 
             // BITFIELD <===
-            Bitfield  bitfield_received = new Bitfield(data_in);
-            System.out.println("Bitfield received : ");
-            System.out.println(bitfield_received.toString());
+            Bitfield  bitfield_received = (Bitfield) new BittorrentMessage(data_in).identify();
+            System.out.println(bitfield_received);
 
             // BITFIELD ===>
             Bitfield bitfield_sent = new Bitfield(new byte[2]);
