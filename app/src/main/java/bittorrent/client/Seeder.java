@@ -17,6 +17,7 @@ import java.util.Arrays;
 
 import bittorrent.client.tcpMessage.Bitfield;
 import bittorrent.client.tcpMessage.BittorrentMessage;
+import bittorrent.client.tcpMessage.NotInterested;
 import bittorrent.client.tcpMessage.Request;
 import bittorrent.client.tcpMessage.Unchocke;
 import bittorrent.client.tcpMessage.Piece;
@@ -68,6 +69,7 @@ public class Seeder {
             // INTERESTED <===
             BittorrentMessage interested = new BittorrentMessage(data_in).identify();
             System.out.println("<=== " + interested);
+            Boolean clientInterested = true;
 
             // UNCHOKE ===>
             Unchocke seederUnchocke = new Unchocke();
@@ -77,10 +79,10 @@ public class Seeder {
             // REQUEST <=<=<=<=<===
             while(true){
                 BittorrentMessage incomingMessage = new BittorrentMessage(data_in).identify();
+                System.out.println("<=== " + incomingMessage);
                 switch(incomingMessage.getMessageType()){
                     case REQUEST:
                         Request request = (Request)incomingMessage;
-                        System.out.println("<=== " + request);
                         // Handle the request by sending a piece message
                         // Select the piece from the file
                         int from = request.getPieceIndex() * torrent.getPiece_length() + request.getPieceBeginOffset();
@@ -93,16 +95,21 @@ public class Seeder {
                         pieceMessage.build(data_out);
                         data_out.flush();
                         break;
+                    case NOT_INTERESTED:
+                        clientInterested = false;
+                        break;
                     default:
-                        System.out.println("<=== " + incomingMessage);
                         break;
 
                 }
+
+                // Exit if the client is no longer interested
+                if (!clientInterested) {
+                    break;
+                }
             }
-
-
-            // Closing socket on exiting
-            //seederSocket.close();
+            //Closing socket on exiting
+            seederSocket.close();
 
         } catch (IOException e) {
             // TODO Auto-generated catch block
