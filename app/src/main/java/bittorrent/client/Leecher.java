@@ -3,6 +3,8 @@ package bittorrent.client;
 import java.io.*;
 import java.net.Socket;
 
+import bittorrent.client.tcpMessage.Bitfield;
+
 public class Leecher {
 
     public void leech(Torrent torrent, byte[] peer_id, Peer seeder) throws IOException {
@@ -31,13 +33,13 @@ public class Leecher {
             System.out.println(handresp.toString());
 
             // BITFIELD <===
-            Bitfield  bitfield = new Bitfield(data_in);
+            Bitfield  bitfield_received = new Bitfield(data_in);
             System.out.println("Bitfield received : ");
-            System.out.println(bitfield.toString());
+            System.out.println(bitfield_received.toString());
 
             // BITFIELD ===>
-            Bitfield Bitf = new Bitfield();
-            Bitf.sendBitfield(data_out);
+            Bitfield bitfield_sent = new Bitfield(new byte[2]);
+            bitfield_sent.send(data_out);
 
             // INTERESTED ===>
             Interested Inti = new Interested();
