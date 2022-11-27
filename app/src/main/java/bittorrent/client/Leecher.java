@@ -10,10 +10,11 @@ import bittorrent.client.tcpMessage.Bitfield;
 
 public class Leecher {
 
-    public void leech(Torrent torrent, byte[] peer_id, Peer seeder) throws IOException {
+    public void leech(TorrentTask task, byte[] peer_id, Peer seeder) throws IOException {
 
         try {
             // TODO : Remove / before IP
+            Torrent torrent = task.getTorrent();
             String server = seeder.getIp().toString().substring(1); // Server name or IP address
             int server_port = seeder.getPort();
             // Create socket that is connected to server on specified port

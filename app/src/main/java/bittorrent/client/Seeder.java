@@ -18,8 +18,9 @@ import bittorrent.client.tcpMessage.Piece;
 
 public class Seeder {
 
-    public void seed(Torrent torrent,int server_port, byte[] peer_id) {
+    public void seed(TorrentTask task,int server_port, byte[] peer_id) {
         try {
+            Torrent torrent = task.getTorrent();
             // TODO : BAD BAD HARDCODED
             final String FILEPATH = "src/test/personalTorrents/Soleil.png";
             // Load the file as a byte Array
