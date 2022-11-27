@@ -141,7 +141,7 @@ public class Utils {
         LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         Configuration config = ctx.getConfiguration();
         LoggerConfig loggerConfig = config.getLoggerConfig(LogManager.ROOT_LOGGER_NAME); 
-        loggerConfig.setLevel(Level.DEBUG);
+        loggerConfig.setLevel(level);
         ctx.updateLoggers();
     }
 

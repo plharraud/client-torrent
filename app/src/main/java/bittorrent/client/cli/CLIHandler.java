@@ -33,6 +33,8 @@ public class CLIHandler {
             Utils.initLogger(Level.INFO);
         }
 
+        log.info("set log level to {}", log.getLevel());
+
         String[] cliArgs = cliCmd.getArgs();
 
         if (cliArgs.length != 2) {
