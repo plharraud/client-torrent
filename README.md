@@ -6,7 +6,11 @@
 # Usage
 `gradle run`
 
-`java -jar app/builds/libs/client.jar -<debug|info> <torrent> <destination>`
+`./client -<debug|info> <torrent> <destination>`
+
+torrents and files are in `dl`, example use :
+
+`./client -info dl/torrents/iceberg.jpg.torrent dl/files`
 
 log verbosity level : debug > info > error (default)
 [etc.](https://logging.apache.org/log4j/2.x/log4j-api/apidocs/index.html)
