@@ -129,14 +129,6 @@ public class Utils {
         return bytes;
     }
 
-    public static String getFileExtension(String name) {
-        int lastIndexOf = name.lastIndexOf(".");
-        if (lastIndexOf == -1) {
-            return ""; // empty extension
-        }
-        return name.substring(lastIndexOf);
-    }
-
     public static void initLogger(Level level) {
         LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         Configuration config = ctx.getConfiguration();
