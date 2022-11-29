@@ -2,7 +2,6 @@ package bittorrent.client.tcpMessage;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class Piece extends BittorrentMessage {
     int pieceIndex;

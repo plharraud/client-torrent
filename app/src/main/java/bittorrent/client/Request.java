@@ -1,9 +1,7 @@
 package bittorrent.client;
 
-import java.util.*;
-import java.lang.*;
-import java.io.*;
-import java.net.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 public class Request {
     /*
