@@ -10,9 +10,11 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 
 import bittorrent.client.TorrentTask;
-import bittorrent.client.Utils;
 
 public class CLIHandler {
 
@@ -27,10 +29,10 @@ public class CLIHandler {
         CommandLine cliCmd = cliParser.parse(cliOptions, args);
     
         if (cliCmd.hasOption("debug")) {
-            Utils.initLogger(Level.DEBUG);
+            initLogger(Level.DEBUG);
         }
         if (cliCmd.hasOption("info")) {
-            Utils.initLogger(Level.INFO);
+            initLogger(Level.INFO);
         }
 
         log.info("set log level to {}", log.getLevel());
@@ -59,5 +61,13 @@ public class CLIHandler {
         }
 
         return new TorrentTask(torrentFile, destinationDir);
+    }
+
+    public static void initLogger(Level level) {
+        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        Configuration config = ctx.getConfiguration();
+        LoggerConfig loggerConfig = config.getLoggerConfig(LogManager.ROOT_LOGGER_NAME); 
+        loggerConfig.setLevel(level);
+        ctx.updateLoggers();
     }
 }
