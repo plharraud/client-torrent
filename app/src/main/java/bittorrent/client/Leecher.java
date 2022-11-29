@@ -6,9 +6,14 @@ import bittorrent.client.tcpMessage.*;
 import java.io.*;
 import java.net.Socket;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import bittorrent.client.tcpMessage.Bitfield;
 
 public class Leecher {
+
+    private static Logger log = LogManager.getLogger();
 
     public void leech(TorrentTask task, byte[] peer_id, Peer seeder) throws IOException {
 
@@ -18,7 +23,7 @@ public class Leecher {
             String server = seeder.getIp().toString().substring(1); // Server name or IP address
             int server_port = seeder.getPort();
             // Create socket that is connected to server on specified port
-            System.out.println("Seeder => IP : " + server + ", Port : " + server_port);
+            log.debug("Seeder => IP : " + server + ", Port : " + server_port);
             Socket socket = new Socket(server, server_port);
 
             DataInputStream data_in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
@@ -31,14 +36,14 @@ public class Leecher {
             // HANDSHAKE <===
             Handshake handresp = new Handshake(data_in);
 
-            System.out.println("Handshake request : ");
-            System.out.println(handreq.toString());
-            System.out.println("Handshake response : ");
-            System.out.println(handresp.toString());
+            log.info("Handshake request : ");
+            log.info(handreq.toString());
+            log.info("Handshake response : ");
+            log.info(handresp.toString());
 
             // BITFIELD <===
             Bitfield  bitfield_received = (Bitfield) new BittorrentMessage(data_in).identify();
-            System.out.println(bitfield_received);
+            log.info(bitfield_received);
 
             // BITFIELD ===>
             Bitfield bitfield_sent = new Bitfield(new byte[2]);
@@ -50,7 +55,7 @@ public class Leecher {
 
             // UNCHOKE <===
             Unchoke unchoke = (Unchoke) new BittorrentMessage(data_in).identify();
-            System.out.println(unchoke);
+            log.info(unchoke);
 
             // Collect all pieces and place it in a buffer
             TorrentFile file = new TorrentFile(torrent.getLength(), torrent.getPiece_length());
@@ -58,7 +63,7 @@ public class Leecher {
             file.generateFile(task.getDownloadedFilePath());
 
 
-            System.out.println("Closing the socket");
+            log.debug("Closing the socket");
             socket.close(); // Close the socket and its streams
 
         } catch (Exception e) {

@@ -3,6 +3,9 @@ package bittorrent.client;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class Request {
     /*
      * Message Length: 13
@@ -16,6 +19,8 @@ public class Request {
     private byte[] index = new byte[4];
     private byte[] offset = new byte[4];
     private byte[] lengthpiece = new byte[4];
+
+    static Logger log = LogManager.getLogger();
 
     public Request(int indexi, int part, int lengthpiecei) {
         this.index = Utils.fromUInt32(indexi);
@@ -34,8 +39,7 @@ public class Request {
             out.write(offset);
             out.write(lengthpiece);
             if (out.size() - sizeinit != 17) {
-                System.out
-                        .println("error Request");
+                log.error("Request");
             }
             out.flush();
         } catch (IOException e) {

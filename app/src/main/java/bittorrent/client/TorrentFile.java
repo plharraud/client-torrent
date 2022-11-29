@@ -3,6 +3,9 @@ package bittorrent.client;
 import java.io.*;
 import java.nio.file.Files;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class TorrentFile {
     final int maxsizepacket = 16384;
     private int length;
@@ -12,6 +15,8 @@ public class TorrentFile {
     private int last_block_size;
     private Piece[] torrentFile;
     private ByteArrayOutputStream imagebytes;
+
+    private static Logger log = LogManager.getLogger();
 
     public TorrentFile(int length, int piecelength) {
         this.length = length;
@@ -27,11 +32,11 @@ public class TorrentFile {
     }
 
     public void displayTorrentInfos() {
-        System.out.println("torrent length : " + length);
-        System.out.println("nb of pieces : " + piece_parts);
-        System.out.println("piece length : " + piece_length);
-        System.out.println("last block : " + last_block_size);
-        System.out.println("download rate : " + maxsizepacket);
+        log.info("torrent length : " + length);
+        log.info("nb of pieces : " + piece_parts);
+        log.info("piece length : " + piece_length);
+        log.info("last block : " + last_block_size);
+        log.info("download rate : " + maxsizepacket);
     }
 
     public void Leeching100(DataInputStream data_in, DataOutputStream data_out) {
@@ -41,7 +46,7 @@ public class TorrentFile {
         }
         Piece piecefinal = new Piece(data_in, data_out, piece_parts - 1, last_piece_parts, last_block_size);
         addPiece(piecefinal);
-        System.out.println("✔ Leeching 100% complete");
+        log.debug("✔ Leeching 100% complete");
     }
 
     public byte[] convertJPGtoBytes(File jpg){
@@ -72,7 +77,7 @@ public class TorrentFile {
         try (OutputStream out = new BufferedOutputStream(
                 new FileOutputStream(filePath))) {
             out.write(imagebytes.toByteArray());
-            System.out.println("✔ File generated");
+            log.debug("✔ File generated");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -2,6 +2,9 @@ package bittorrent.client;
 
 import java.io.*;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class Handshake {
 
     // 1/19/8/20/20 = 68
@@ -10,6 +13,8 @@ public class Handshake {
     private byte[] extension;
     private byte[] info_hash;
     private byte[] peer_id;
+
+    private static Logger log = LogManager.getLogger();
 
     public Handshake(byte[] extension, byte[] info_hash, byte[] peer_id) {
         this.name_length = 19;
@@ -53,8 +58,7 @@ public class Handshake {
             out.write(getInfo_hash());
             out.write(getPeer_id());
             if (out.size() != 68) {
-                System.out
-                        .println("TAILLE BUFFER INCOHERENTE HANDSHAKE : " + out.size());
+                log.error("TAILLE BUFFER INCOHERENTE HANDSHAKE : " + out.size());
             }
             out.flush();
         } catch (IOException e) {
@@ -64,14 +68,14 @@ public class Handshake {
 
     public int verifyHandshakeIntegrity(byte[] actual_info_hash){
         if(getName_length() != 19 || !getName().equals("BitTorrent protocol")){
-            System.out.println("1 : Is not a valid BitTorrent protocol");
+            log.error("1 : Is not a valid BitTorrent protocol");
             return 1;
         }
         if(getInfo_hash() != actual_info_hash){
-            System.out.println("2 : Wrong info hash");
+            log.error("2 : Wrong info hash");
             return 2;
         }
-        System.out.println("0 : Valid Handshake");
+        log.info("0 : Valid Handshake");
         return 0;
     }
 
