@@ -21,10 +21,9 @@ public class Seeder {
     public void seed(TorrentTask task,int server_port, byte[] peer_id) {
         try {
             Torrent torrent = task.getTorrent();
-            // TODO : BAD BAD HARDCODED
-            final String FILEPATH = "src/test/personalTorrents/Soleil.png";
+
             // Load the file as a byte Array
-            File file = new File(FILEPATH);
+            File file = new File(task.getDownloadedFilePath());
             byte[] fileAsBytes = Files.readAllBytes(file.toPath());
 
             // When seeding, we are the server, waiting for a client connexion.
