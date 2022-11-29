@@ -3,6 +3,7 @@ package bittorrent.client;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import bittorrent.client.cli.CLIException;
 import bittorrent.client.cli.CLIHandler;
 
 public class Client {
@@ -33,9 +34,10 @@ public class Client {
                 }
             }
 
+        } catch (CLIException e) {
+            System.err.println(e.getMessage());
         } catch (Exception e) {
             log.error(e);
-            System.exit(1);
         }
     }
 }
