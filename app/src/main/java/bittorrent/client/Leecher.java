@@ -55,7 +55,7 @@ public class Leecher {
             // Collect all pieces and place it in a buffer
             TorrentFile file = new TorrentFile(torrent.getLength(), torrent.getPiece_length());
             file.Leeching100(data_in, data_out);
-            file.generateFile(torrent.getName());
+            file.generateFile(task.getDownloadedFilePath());
 
 
             System.out.println("Closing the socket");

@@ -57,9 +57,9 @@ public class TorrentFile {
         torrentFile[piece.getIndex()] = piece;
     }
 
-    public void generateFile(String fileName){
+    public void generateFile(String filePath){
         writeFullBytes();
-        bytesToFile(fileName);
+        bytesToFile(filePath);
     }
     public void writeFullBytes(){
         imagebytes = new ByteArrayOutputStream();
@@ -68,9 +68,9 @@ public class TorrentFile {
         }
     }
 
-    public void bytesToFile(String fileName) {
+    public void bytesToFile(String filePath) {
         try (OutputStream out = new BufferedOutputStream(
-                new FileOutputStream("src/test/results/"+fileName))) {
+                new FileOutputStream(filePath))) {
             out.write(imagebytes.toByteArray());
             System.out.println("✔ File generated");
         } catch (Exception e) {
