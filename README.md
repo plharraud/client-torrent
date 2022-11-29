@@ -1,23 +1,19 @@
 # BITTORRENT
 
-gradle build
+# Build
+`gradle build`
 
-gradle run
+# Usage
+`gradle run`
 
-## Tracker
+`java -jar app/builds/libs/client.jar -<debug|info> <torrent> <destination>`
 
+log verbosity level : debug > info > error (default)
+[etc.](https://logging.apache.org/log4j/2.x/log4j-api/apidocs/index.html)
+
+## Commands
+```
 ./opentracker.debug -i 127.0.0.1 -p 6969
-./opentracker.debug -i <adresse publique|interface loopback> -p 6969
-
-## Testing
-
-To test the client further than unit tests, you can locally run a tracker through docker
-
-Pull the docker image using:
-`docker pull lednerb/opentracker-docker`
-
-You can then run it with:
-`docker run -d --name opentracker -p 6969:6969/udp -p 6969:6969 lednerb/opentracker-docker`
-
-To verify that the tracker is runing, you can look at the stats at:
-`http://localhost:6969/stats`
+ps -aux | grep idea
+killall java
+```

@@ -1,14 +1,20 @@
 package bittorrent.client;
 
+import bittorrent.client.tcpMessage.BittorrentMessage;
+import bittorrent.client.tcpMessage.*;
+
 import java.io.*;
 import java.net.Socket;
 
+import bittorrent.client.tcpMessage.Bitfield;
+
 public class Leecher {
 
-    public void leech(Torrent torrent, byte[] peer_id, Peer seeder) throws IOException {
+    public void leech(TorrentTask task, byte[] peer_id, Peer seeder) throws IOException {
 
         try {
             // TODO : Remove / before IP
+            Torrent torrent = task.getTorrent();
             String server = seeder.getIp().toString().substring(1); // Server name or IP address
             int server_port = seeder.getPort();
             // Create socket that is connected to server on specified port
@@ -31,38 +37,25 @@ public class Leecher {
             System.out.println(handresp.toString());
 
             // BITFIELD <===
-            Bitfield  bitfield = new Bitfield(data_in);
-            System.out.println("Bitfield received : ");
-            System.out.println(bitfield.toString());
+            Bitfield  bitfield_received = (Bitfield) new BittorrentMessage(data_in).identify();
+            System.out.println(bitfield_received);
 
             // BITFIELD ===>
-            Bitfield Bitf = new Bitfield();
-            Bitf.sendBitfield(data_out);
+            Bitfield bitfield_sent = new Bitfield(new byte[2]);
+            bitfield_sent.send(data_out);
 
             // INTERESTED ===>
-            Interested Inti = new Interested();
-            Inti.sendSeq(data_out);
+            Interested interested = new Interested();
+            interested.send(data_out);
 
             // UNCHOKE <===
-            Unchoke unchoketest = new Unchoke(data_in);
-            System.out.println("Unchoke received : ");
-            System.out.println(unchoketest.toString());
+            Unchoke unchoke = (Unchoke) new BittorrentMessage(data_in).identify();
+            System.out.println(unchoke);
 
             // Collect all pieces and place it in a buffer
             TorrentFile file = new TorrentFile(torrent.getLength(), torrent.getPiece_length());
             file.Leeching100(data_in, data_out);
-            file.generateJPG();
-            String trollGenere = Utils.bytesToHex(file.getImageBytesAray());
-            String trollSource = Utils.bytesToHex(file.convertJPGtoBytes(new File("src/test/resources/jpg/4K.jpg")));
-            PrintWriter sortieGenere = new PrintWriter("src/test/resources/jpg/genere.txt");
-            PrintWriter sortieSource = new PrintWriter("src/test/resources/jpg/source.txt");
-            sortieGenere.println(trollGenere);
-            sortieSource.println(trollSource);
-
-
-
-            System.out.println("Comparaison des JPG");
-            System.out.println(trollSource.equals(trollGenere));
+            file.generateFile(torrent.getName());
 
 
             System.out.println("Closing the socket");

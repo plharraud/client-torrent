@@ -14,8 +14,9 @@ public class KeepAlive extends BittorrentMessage {
     }
 
     @Override
-    public void build(DataOutputStream out) throws IOException {
+    public void send(DataOutputStream out) throws IOException {
         out.writeInt(0);
+        out.flush();
     }
 
     @Override

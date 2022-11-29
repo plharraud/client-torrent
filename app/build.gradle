@@ -37,9 +37,9 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass = 'bittorrent.client.App'
+    mainClass = 'bittorrent.client.Client'
     run {
-        args = ["src/test/personalTorrents/Soleil.png.torrent", "src/test/personalTorrents/"]
+        args = ["src/test/resources/torrents/iceberg.jpg.torrent", "src/test/resources/jpg/"]
     }
 
 }
@@ -48,10 +48,14 @@ jar {
     archiveBaseName = 'client'
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
-        attributes 'Main-Class': 'bittorrent.client.App'
+        attributes(
+            'Main-Class': 'bittorrent.client.Client',
+            'Multi-Release': true // fixes log4j jre11 bug https://issues.apache.org/jira/browse/LOG4J2-2834
+        )
+
     }
     from {
-        configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+        configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } // packs dependencies
     }
 }
 

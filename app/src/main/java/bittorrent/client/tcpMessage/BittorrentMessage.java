@@ -5,7 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 
-public class BittorrentMessage implements IBittorentMessageBuilder, IBittorentMessageHandler {
+public class BittorrentMessage implements IBittorentMessageSender, IBittorentMessageHandler {
     DataInputStream dataInput;
     int messageLength;
     int messageType;
@@ -86,7 +86,7 @@ public class BittorrentMessage implements IBittorentMessageBuilder, IBittorentMe
                 identifiedMessage = new Request(this);
                 break;
             case UNCHOKE:
-                identifiedMessage = new Unchocke(this);
+                identifiedMessage = new Unchoke(this);
                 break;
             default:
                 break;
@@ -100,7 +100,7 @@ public class BittorrentMessage implements IBittorentMessageBuilder, IBittorentMe
     }
 
     @Override
-    public void build(DataOutputStream out) throws IOException {
+    public void send(DataOutputStream out) throws IOException {
         out.writeInt(messageLength);
         out.writeByte(messageType);
     }

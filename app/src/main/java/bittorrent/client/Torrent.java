@@ -52,7 +52,6 @@ public class Torrent {
 			computeInfoHash(infoMap);
 			this.pieces_number = (int) Math.ceil((float) length / (float) piece_length);
 
-			this.FileName = FilenameUtils.getBaseName(file.getName());
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -116,6 +115,10 @@ public class Torrent {
 
 	public Integer getNumberOfPieces(){
 		return pieces_number;
+	}
+
+	public String getFileName() {
+		return FileName;
 	}
 
 }

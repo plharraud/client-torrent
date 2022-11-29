@@ -2,12 +2,7 @@ package bittorrent.client;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.EOFException;
 import java.io.File;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.Console;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -18,13 +13,14 @@ import java.util.Arrays;
 import bittorrent.client.tcpMessage.Bitfield;
 import bittorrent.client.tcpMessage.BittorrentMessage;
 import bittorrent.client.tcpMessage.Request;
-import bittorrent.client.tcpMessage.Unchocke;
+import bittorrent.client.tcpMessage.Unchoke;
 import bittorrent.client.tcpMessage.Piece;
 
 public class Seeder {
 
-    public void seed(Torrent torrent,int server_port, byte[] peer_id) {
+    public void seed(TorrentTask task,int server_port, byte[] peer_id) {
         try {
+            Torrent torrent = task.getTorrent();
             // TODO : BAD BAD HARDCODED
             final String FILEPATH = "src/test/personalTorrents/Soleil.png";
             // Load the file as a byte Array
@@ -62,25 +58,25 @@ public class Seeder {
             // BITFIELD ===>
             Bitfield seederBitfield = new Bitfield(Utils.hexStringToByteArray("ffffff80"));
             System.out.println("===> " + seederBitfield);
-            seederBitfield.build(data_out);
-            data_out.flush();
+            seederBitfield.send(data_out);
 
             // INTERESTED <===
             BittorrentMessage interested = new BittorrentMessage(data_in).identify();
             System.out.println("<=== " + interested);
+            Boolean clientInterested = true;
 
             // UNCHOKE ===>
-            Unchocke seederUnchocke = new Unchocke();
+            Unchoke seederUnchocke = new Unchoke();
             System.out.println("===> " + seederUnchocke);
-            seederUnchocke.build(data_out);
+            seederUnchocke.send(data_out);
 
             // REQUEST <=<=<=<=<===
             while(true){
                 BittorrentMessage incomingMessage = new BittorrentMessage(data_in).identify();
+                System.out.println("<=== " + incomingMessage);
                 switch(incomingMessage.getMessageType()){
                     case REQUEST:
                         Request request = (Request)incomingMessage;
-                        System.out.println("<=== " + request);
                         // Handle the request by sending a piece message
                         // Select the piece from the file
                         int from = request.getPieceIndex() * torrent.getPiece_length() + request.getPieceBeginOffset();
@@ -90,19 +86,23 @@ public class Seeder {
                         // Create the message:
                         Piece pieceMessage = new Piece(request.getPieceIndex(), request.getPieceBeginOffset(), piece);
                         System.out.println("===> " + pieceMessage);
-                        pieceMessage.build(data_out);
-                        data_out.flush();
+                        pieceMessage.send(data_out);
+                        break;
+                    case NOT_INTERESTED:
+                        clientInterested = false;
                         break;
                     default:
-                        System.out.println("<=== " + incomingMessage);
                         break;
 
                 }
+
+                // Exit if the client is no longer interested
+                if (!clientInterested) {
+                    break;
+                }
             }
-
-
-            // Closing socket on exiting
-            //seederSocket.close();
+            //Closing socket on exiting
+            seederSocket.close();
 
         } catch (IOException e) {
             // TODO Auto-generated catch block

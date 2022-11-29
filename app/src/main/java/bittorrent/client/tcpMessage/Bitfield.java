@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.BitSet;
 
 public class Bitfield extends BittorrentMessage {
     byte[] bitfield;
@@ -26,10 +27,18 @@ public class Bitfield extends BittorrentMessage {
         bittorrentMessage.dataInput.read(this.bitfield);
     }
 
+    public boolean hasPiece(int index){
+        BitSet data = BitSet.valueOf(getBitfield());
+        int offset = index/8; // Se place sur le bon octet
+        int indexLittleEndian = (7 + offset*8) - (index % 8) ; // Converti en little endian sur le bon octet
+        return data.get(indexLittleEndian);
+    }
+
     @Override
-    public void build(DataOutputStream out) throws IOException {
-        super.build(out);
+    public void send(DataOutputStream out) throws IOException {
+        super.send(out);
         out.write(bitfield);
+        out.flush();
     }
     @Override
     public void handle() {
