@@ -23,7 +23,7 @@ public class Leecher {
             String server = seeder.getIp().toString().substring(1); // Server name or IP address
             int server_port = seeder.getPort();
             // Create socket that is connected to server on specified port
-            log.debug("Seeder => IP : " + server + ", Port : " + server_port);
+            log.info("Seeder => IP : " + server + ", Port : " + server_port);
             Socket socket = new Socket(server, server_port);
 
             DataInputStream data_in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
@@ -36,14 +36,14 @@ public class Leecher {
             // HANDSHAKE <===
             Handshake handresp = new Handshake(data_in);
 
-            log.info("Handshake request : ");
-            log.info(handreq.toString());
-            log.info("Handshake response : ");
-            log.info(handresp.toString());
+            log.debug("Handshake request : ");
+            log.debug(handreq.toString());
+            log.debug("Handshake response : ");
+            log.debug(handresp.toString());
 
             // BITFIELD <===
             Bitfield  bitfield_received = (Bitfield) new BittorrentMessage(data_in).identify();
-            log.info(bitfield_received);
+            log.debug(bitfield_received);
 
             // BITFIELD ===>
             Bitfield bitfield_sent = new Bitfield(new byte[2]);
@@ -55,7 +55,7 @@ public class Leecher {
 
             // UNCHOKE <===
             Unchoke unchoke = (Unchoke) new BittorrentMessage(data_in).identify();
-            log.info(unchoke);
+            log.debug(unchoke);
 
             // Collect all pieces and place it in a buffer
             TorrentFile file = new TorrentFile(torrent.getLength(), torrent.getPiece_length());
@@ -63,7 +63,7 @@ public class Leecher {
             file.generateFile(task.getDownloadedFilePath());
 
 
-            log.debug("Closing the socket");
+            log.info("Closing the socket");
             socket.close(); // Close the socket and its streams
 
         } catch (Exception e) {

@@ -75,7 +75,7 @@ public class Handshake {
             log.error("2 : Wrong info hash");
             return 2;
         }
-        log.info("0 : Valid Handshake");
+        log.debug("0 : Valid Handshake");
         return 0;
     }
 

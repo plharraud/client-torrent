@@ -34,51 +34,51 @@ public class Seeder {
 
             // When seeding, we are the server, waiting for a client connexion.
             // As such, we need to open a server socket, on the port specified
-            log.debug("Accepting requests on port " + server_port);
+            log.info("Accepting requests on port " + server_port);
             ServerSocket seederSocket = new ServerSocket(server_port);
 
             // This function is blocking, and will advance only uppon recieving a request
             Socket clientSocket = seederSocket.accept();
             
             SocketAddress clientAddress = clientSocket.getRemoteSocketAddress();
-            log.debug("Handling client at " + clientAddress);
+            log.info("Handling client at " + clientAddress);
 
             DataInputStream data_in = new DataInputStream(clientSocket.getInputStream());
             DataOutputStream data_out = new DataOutputStream(clientSocket.getOutputStream());
             
             // HANDSHAKE <===
             Handshake handreq1 = new Handshake(data_in);
-            log.info("Handshake request : ");
-            log.info(handreq1.toString());
+            log.debug("Handshake request : ");
+            log.debug(handreq1.toString());
 
             // HANDSHAKE ===>
             Handshake handresp = new Handshake(new byte[8], torrent.getInfo_hash(), peer_id);
             handresp.sendHandshake(data_out);
-            log.info("Handshake response : \n" + handresp);
+            log.debug("Handshake response : \n" + handresp);
 
             // BITFIELD <===
             BittorrentMessage bitfield = (new BittorrentMessage(data_in)).identify();
-            log.info("<=== " + bitfield);
+            log.debug("<=== " + bitfield);
 
             // BITFIELD ===>
             Bitfield seederBitfield = new Bitfield(Utils.hexStringToByteArray("ffffff80"));
-            log.info("===> " + seederBitfield);
+            log.debug("===> " + seederBitfield);
             seederBitfield.send(data_out);
 
             // INTERESTED <===
             BittorrentMessage interested = new BittorrentMessage(data_in).identify();
-            log.info("<=== " + interested);
+            log.debug("<=== " + interested);
             Boolean clientInterested = true;
 
             // UNCHOKE ===>
             Unchoke seederUnchocke = new Unchoke();
-            log.info("===> " + seederUnchocke);
+            log.debug("===> " + seederUnchocke);
             seederUnchocke.send(data_out);
 
             // REQUEST <=<=<=<=<===
             while(true){
                 BittorrentMessage incomingMessage = new BittorrentMessage(data_in).identify();
-                log.info("<=== " + incomingMessage);
+                log.debug("<=== " + incomingMessage);
                 switch(incomingMessage.getMessageType()){
                     case REQUEST:
                         Request request = (Request)incomingMessage;
@@ -90,7 +90,7 @@ public class Seeder {
                         assert piece.length == request.getPieceLength();
                         // Create the message:
                         Piece pieceMessage = new Piece(request.getPieceIndex(), request.getPieceBeginOffset(), piece);
-                        log.info("===> " + pieceMessage);
+                        log.debug("===> " + pieceMessage);
                         pieceMessage.send(data_out);
                         break;
                     case NOT_INTERESTED:

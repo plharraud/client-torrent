@@ -32,11 +32,11 @@ public class TorrentFile {
     }
 
     public void displayTorrentInfos() {
-        log.info("torrent length : " + length);
-        log.info("nb of pieces : " + piece_parts);
-        log.info("piece length : " + piece_length);
-        log.info("last block : " + last_block_size);
-        log.info("download rate : " + maxsizepacket);
+        log.debug("torrent length : " + length);
+        log.debug("nb of pieces : " + piece_parts);
+        log.debug("piece length : " + piece_length);
+        log.debug("last block : " + last_block_size);
+        log.debug("download rate : " + maxsizepacket);
     }
 
     public void Leeching100(DataInputStream data_in, DataOutputStream data_out) {
@@ -46,7 +46,7 @@ public class TorrentFile {
         }
         Piece piecefinal = new Piece(data_in, data_out, piece_parts - 1, last_piece_parts, last_block_size);
         addPiece(piecefinal);
-        log.debug("✔ Leeching 100% complete");
+        log.info("✔ Leeching 100% complete");
     }
 
     public byte[] convertJPGtoBytes(File jpg){
@@ -77,7 +77,7 @@ public class TorrentFile {
         try (OutputStream out = new BufferedOutputStream(
                 new FileOutputStream(filePath))) {
             out.write(imagebytes.toByteArray());
-            log.debug("✔ File generated");
+            log.info("✔ File generated");
         } catch (Exception e) {
             e.printStackTrace();
         }
