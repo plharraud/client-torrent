@@ -1,6 +1,9 @@
 package bittorrent.client;
 
 import org.junit.jupiter.api.Test;
+
+import bittorrent.client.torrent.Torrent;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;

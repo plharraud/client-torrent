@@ -17,6 +17,8 @@ import bittorrent.client.tcpMessage.Bitfield;
 import bittorrent.client.tcpMessage.BittorrentMessage;
 import bittorrent.client.tcpMessage.Request;
 import bittorrent.client.tcpMessage.Unchoke;
+import bittorrent.client.torrent.Torrent;
+import bittorrent.client.torrent.TorrentTask;
 import bittorrent.client.tcpMessage.Piece;
 
 public class Seeder {

@@ -1,4 +1,4 @@
-package bittorrent.client;
+package bittorrent.client.tracker;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,25 +8,28 @@ import java.util.Map;
 
 import be.adaxisoft.bencode.BDecoder;
 import be.adaxisoft.bencode.BEncodedValue;
+import bittorrent.client.Peer;
+import bittorrent.client.Utils;
 
 
 public class TrackerInfo {
-    // tracker response with a single peer
-    // private String correctResponse = "d8:completei0e10:downloadedi0e10:incompletei1e8:intervali1976e12:min intervali988e5:peers6:??e";
 
+    // interval in seconds between regular requests to the tracker
     private int interval;
-    private int complete;
-    private int incomplete;
-    private Peer[] peers;
-    public ArrayList<Peer> peersList = new ArrayList<Peer>();
 
-    TrackerInfo(InputStream bencodeResponse) {
-        try {        
+    // number of seeders
+    private int complete;
+
+    // number of leechers
+    private int incomplete;
+
+    private ArrayList<Peer> peers = new ArrayList<Peer>();
+
+    public TrackerInfo(InputStream bencodeResponse) {
+        try {
             // Parse the bencode response
             BDecoder reader = new BDecoder(bencodeResponse);
             Map<String, BEncodedValue> document = reader.decodeMap().getMap();
-
-
             // Load the values
             //TODO verifier qu'elles sont la avant de les get, ou traiter les erreurs
             interval = document.get("interval").getInt();
@@ -37,11 +40,9 @@ public class TrackerInfo {
             // We Create a matrix of peer vector, each vector is PEER_SIZE bytes long  (6) and represents a peer
             byte[] rawPeers = document.get("peers").getBytes();
             byte[][] peersInBytes = Utils.deepenByteArray(rawPeers, Peer.PEER_SIZE);
-            peers = new Peer[peersInBytes.length];
             for (int i = 0; i < peersInBytes.length; i++){
                 Peer peer = new Peer(peersInBytes[i]);
-                peers[i] = peer;
-                peersList.add(peer);
+                peers.add(peer);
             }
 
         } catch (IOException e) {
@@ -62,15 +63,12 @@ public class TrackerInfo {
         return incomplete;
     }
 
-    public Peer[] getPeers() {
+    public ArrayList<Peer> getPeers() {
         return peers;
     }
 
     @Override
     public String toString() {
-        return "TrackerInfo [interval=" + interval + ", complete=" + complete + ", incomplete=" + incomplete + ", peers=" + Arrays.toString(peers) + "]";
+        return "TrackerInfo [interval=" + interval + ", complete=" + complete + ", incomplete=" + incomplete + ", peers=" + peers + "]";
     }
-
-
-    
 }

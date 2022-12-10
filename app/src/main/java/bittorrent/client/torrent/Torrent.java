@@ -1,4 +1,4 @@
-package bittorrent.client;
+package bittorrent.client.torrent;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -6,48 +6,31 @@ import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.util.Map;
 
+import org.apache.commons.io.FilenameUtils;
+
 import be.adaxisoft.bencode.BDecoder;
 import be.adaxisoft.bencode.BEncodedValue;
 import be.adaxisoft.bencode.BEncoder;
 import be.adaxisoft.bencode.InvalidBEncodingException;
+import bittorrent.client.Utils;
 
 public class Torrent {
 
-	private Map<String, BEncodedValue> infoMap;
-	private byte[] info_hash = new byte[20];
+	public Torrent(File torrent, File targetDir) {
+		TorrentFile torrentFile = new TorrentFile(torrent);
+		TargetFile   targetFile = new TargetFile(FilenameUtils.concat(targetDir.getPath(), torrentFile.getName()))
 
-	private String announce;
+		FileInputStream fileInputStream = new FileInputStream(file);
 
-	private String name;
-	private Integer length;
+		BDecoder reader = new BDecoder(fileInputStream);
+		Map<String, BEncodedValue> document = reader.decodeMap().getMap();
 
-	private Integer piece_length;
-	private String pieces;
-	private Integer pieces_number;
+		announce = document.get("announce").getString();
 
-	private String FileName;
-
-	public Torrent() {
-	}
-	
-	public Torrent(File file) {
-		try {
-			FileInputStream fileInputStream = new FileInputStream(file);
-
-			BDecoder reader = new BDecoder(fileInputStream);
-			Map<String, BEncodedValue> document = reader.decodeMap().getMap();
-
-			announce = document.get("announce").getString();
-
-			infoMap = document.get("info").getMap();
-			parseInfoMap(infoMap);
-			computeInfoHash(infoMap);
-			this.pieces_number = (int) Math.ceil((float) length / (float) piece_length);
-
-
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		infoMap = document.get("info").getMap();
+		parseInfoMap(infoMap);
+		computeInfoHash(infoMap);
+		this.pieces_number = (int) Math.ceil((float) length / (float) piece_length);
 	}
 
 	private void parseInfoMap(Map<String, BEncodedValue> infoMap) {
@@ -108,9 +91,4 @@ public class Torrent {
 	public Integer getNumberOfPieces(){
 		return pieces_number;
 	}
-
-	public String getFileName() {
-		return FileName;
-	}
-
 }

@@ -1,4 +1,4 @@
-package bittorrent.client;
+package bittorrent.client.torrent;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -6,7 +6,9 @@ import java.nio.file.Files;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class TorrentFile {
+import bittorrent.client.Piece;
+
+public class TorrentFile_ {
     final int maxsizepacket = 16384;
     private int length;
     private int piece_length;
@@ -18,7 +20,7 @@ public class TorrentFile {
 
     private static Logger log = LogManager.getLogger();
 
-    public TorrentFile(int length, int piecelength) {
+    public TorrentFile_(int length, int piecelength) {
         this.length = length;
         this.piece_length = piecelength;
         this.piece_parts = (int) Math.ceil((float) length / (float) piecelength);

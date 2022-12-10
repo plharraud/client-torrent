@@ -1,6 +1,9 @@
 package bittorrent.client;
 
 import bittorrent.client.tcpMessage.BittorrentMessage;
+import bittorrent.client.torrent.Torrent;
+import bittorrent.client.torrent.TorrentFile_;
+import bittorrent.client.torrent.TorrentTask;
 import bittorrent.client.tcpMessage.*;
 
 import java.io.*;
@@ -58,7 +61,7 @@ public class Leecher {
             log.debug(unchoke);
 
             // Collect all pieces and place it in a buffer
-            TorrentFile file = new TorrentFile(torrent.getLength(), torrent.getPiece_length());
+            TorrentFile_ file = new TorrentFile_(torrent.getLength(), torrent.getPiece_length());
             file.Leeching100(data_in, data_out);
             file.generateFile(task.getDownloadedFilePath());
 

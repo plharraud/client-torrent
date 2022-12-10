@@ -11,6 +11,9 @@ import java.net.http.HttpResponse.BodyHandlers;
 import java.time.Duration;
 import java.util.Random;
 
+import bittorrent.client.torrent.Torrent;
+import bittorrent.client.tracker.TrackerInfo;
+
 import java.time.temporal.ChronoUnit;
 
 public class TrackerConnect {

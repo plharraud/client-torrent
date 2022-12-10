@@ -1,6 +1,7 @@
-package bittorrent.client;
+package bittorrent.client.torrent;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -14,10 +15,13 @@ public class TorrentTask {
     private String downloadedFilePath;
     private File downloadedFile;
 
+    private MetaInfoFile metaInfoFile;
 
-    public TorrentTask(File torrentFile, File destinationDir) {
+    public TorrentTask(File torrentFile, File destinationDir) throws IOException {
         this.torrentFile = torrentFile;
         this.torrent = new Torrent(torrentFile);
+        this.metaInfoFile = new MetaInfoFile(torrentFile);
+        this.metaInfoFile.parse();
         this.destinationDir = destinationDir;
         this.downloadedFilePath = FilenameUtils.concat(destinationDir.getPath(), torrent.getName());
         this.downloadedFile = new File(downloadedFilePath);

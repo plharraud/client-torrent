@@ -9,6 +9,7 @@ public class Peer {
     public static final int PEER_SIZE = 6;
     private InetAddress ip;
     private int port;
+    private int id;
 
     // Constructor from a byte array
     public Peer(byte[] peerInfo) {
@@ -29,6 +30,14 @@ public class Peer {
 
     }
 
+    public Peer(int port) {
+        this.port = port;
+    }
+
+    public int getId() {
+        return 0;
+    }
+
     public InetAddress getIp() {
         return ip;
     }
@@ -41,5 +50,5 @@ public class Peer {
     public String toString() {
         return "Peer [ip=" + ip + ", port=" + port + "]";
     }
-    
+
 }
