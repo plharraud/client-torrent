@@ -11,18 +11,18 @@ public class Handshake {
     private int name_length;
     private String name;
     private byte[] extension;
-    private byte[] info_hash;
+    private Hash info_hash;
     private byte[] peer_id;
 
     private static Logger log = LogManager.getLogger();
 
-    public Handshake(byte[] extension, byte[] info_hash, byte[] peer_id) {
+    public Handshake(byte[] extension, Hash info_hash, byte[] peer_id) {
         this.name_length = 19;
         this.name = "BitTorrent protocol";
         this.extension = extension;
         this.info_hash = info_hash;
         this.peer_id = peer_id;
-        verifyHandshakeIntegrity(info_hash);
+        //verifyHandshakeIntegrity(info_hash);
     }
 
     public Handshake(DataInputStream in) throws IOException {
@@ -42,9 +42,9 @@ public class Handshake {
             this.name_length = Utils.byteArrayToUnsignedInt(name_leng);
             this.name = new String(nameb);
             this.extension = extension;
-            this.info_hash = hash;
+            this.info_hash = Hash.fromBytes(hash);
             this.peer_id = peerid;
-            verifyHandshakeIntegrity(hash);
+            //verifyHandshakeIntegrity(); // check le hash avec lui meme ?
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -55,7 +55,7 @@ public class Handshake {
             out.writeByte(getName_length());
             out.writeBytes(getName());
             out.write(getExtension());
-            out.write(getInfo_hash());
+            out.write(getInfo_hash().asBytes());
             out.write(getPeer_id());
             if (out.size() != 68) {
                 log.error("TAILLE BUFFER INCOHERENTE HANDSHAKE : " + out.size());
@@ -66,12 +66,12 @@ public class Handshake {
         }
     }
 
-    public int verifyHandshakeIntegrity(byte[] actual_info_hash){
+    public int verifyHandshakeIntegrity(Hash hash){
         if(getName_length() != 19 || !getName().equals("BitTorrent protocol")){
             log.error("1 : Is not a valid BitTorrent protocol");
             return 1;
         }
-        if(getInfo_hash() != actual_info_hash){
+        if(! this.info_hash.equals(hash)){
             log.error("2 : Wrong info hash");
             return 2;
         }
@@ -103,11 +103,11 @@ public class Handshake {
         this.extension = extension;
     }
 
-    public byte[] getInfo_hash() {
+    public Hash getInfo_hash() {
         return this.info_hash;
     }
 
-    public void setInfo_hash(byte[] info_hash) {
+    public void setInfo_hash(Hash info_hash) {
         this.info_hash = info_hash;
     }
 
@@ -125,7 +125,7 @@ public class Handshake {
                 " name_length='" + getName_length() + "'" +
                 ", name='" + getName() + "'" +
                 ", extension='" + Utils.bytesToHex(getExtension()) + "'" +
-                ", info_hash='" + Utils.bytesToHex(getInfo_hash()) + "'" +
+                ", info_hash='" + getInfo_hash().asHex() + "'" +
                 ", peer_id='" + Utils.bytesToHex(getPeer_id()) + "'" +
                 "}";
     }

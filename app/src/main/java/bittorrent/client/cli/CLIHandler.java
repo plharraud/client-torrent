@@ -3,7 +3,6 @@ package bittorrent.client.cli;
 import org.apache.commons.cli.Options;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FilenameUtils;
@@ -20,7 +19,7 @@ public class CLIHandler {
 
     public static Logger log = LogManager.getLogger();
 
-    public static Torrent parse(String[] args) throws CLIException, IOException, ParseException {
+    public static Torrent parse(String[] args) throws Exception {
         Options cliOptions = new Options();
         cliOptions.addOption("debug", false, "print debug messages");
         cliOptions.addOption("info", false, "print information");
@@ -50,8 +49,8 @@ public class CLIHandler {
             throw new CLIException(torrentFilePath + " is not a .torrent file");
         }
 
-        File torrent = new File(torrentFilePath);
-        if (! torrent.exists()) {
+        File torrentFile = new File(torrentFilePath);
+        if (! torrentFile.exists()) {
             throw new CLIException(torrentFilePath + " does not exist");
         }
 
@@ -60,7 +59,7 @@ public class CLIHandler {
             throw new CLIException(targetDirPath + " is not a directory");
         }
 
-        return new Torrent(torrent, target);
+        return new Torrent(torrentFile, target);
     }
 
     public static void initLogger(Level level) {

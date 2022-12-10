@@ -3,16 +3,21 @@ package bittorrent.client.tracker;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import be.adaxisoft.bencode.BDecoder;
 import be.adaxisoft.bencode.BEncodedValue;
+import be.adaxisoft.bencode.InvalidBEncodingException;
 import bittorrent.client.Peer;
 import bittorrent.client.Utils;
 
-
 public class TrackerInfo {
+
+    Logger log = LogManager.getLogger();
 
     // interval in seconds between regular requests to the tracker
     private int interval;
@@ -23,9 +28,9 @@ public class TrackerInfo {
     // number of leechers
     private int incomplete;
 
-    private ArrayList<Peer> peers = new ArrayList<Peer>();
+    private List<Peer> peers = new ArrayList<Peer>();
 
-    public TrackerInfo(InputStream bencodeResponse) {
+    public TrackerInfo(InputStream bencodeResponse) throws IOException {
         try {
             // Parse the bencode response
             BDecoder reader = new BDecoder(bencodeResponse);
@@ -35,19 +40,20 @@ public class TrackerInfo {
             interval = document.get("interval").getInt();
             complete = document.get("complete").getInt();
             incomplete = document.get("incomplete").getInt();
+            log.info("interval={}, complete (seeders)={}, incomplete (leechers)={}", interval, complete, incomplete);
 
             // Load the peers
             // We Create a matrix of peer vector, each vector is PEER_SIZE bytes long  (6) and represents a peer
             byte[] rawPeers = document.get("peers").getBytes();
-            byte[][] peersInBytes = Utils.deepenByteArray(rawPeers, Peer.PEER_SIZE);
+            byte[][] peersInBytes = Utils.deeperByteArray(rawPeers, Peer.PEER_SIZE);
             for (int i = 0; i < peersInBytes.length; i++){
                 Peer peer = new Peer(peersInBytes[i]);
+                log.debug("peer {}, {}", i, peer);
                 peers.add(peer);
             }
 
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (InvalidBEncodingException e) {
+            log.error(e.getMessage());
         }
     }
 
@@ -63,7 +69,7 @@ public class TrackerInfo {
         return incomplete;
     }
 
-    public ArrayList<Peer> getPeers() {
+    public List<Peer> getPeers() {
         return peers;
     }
 

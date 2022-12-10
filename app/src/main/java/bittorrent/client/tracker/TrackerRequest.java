@@ -11,8 +11,13 @@ import java.time.Duration;
 
 import bittorrent.client.Hash;
 import bittorrent.client.Peer;
+import bittorrent.client.Utils;
+import bittorrent.client.torrent.Torrent;
 
 import java.time.temporal.ChronoUnit;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class TrackerRequest {
 
@@ -21,15 +26,15 @@ public class TrackerRequest {
     private String announceURL;
     private Hash infoHash;
     private Peer self;
+    private int left; // bytes left to download until 100%
 
-    // bytes left to download until 100%
-    private int left;
+    Logger log = LogManager.getLogger();
 
-    public TrackerRequest(String announceURL, Hash infoHash, Peer self, int left) {
-        this.announceURL = announceURL;
-        this.infoHash = infoHash;
+    public TrackerRequest(Torrent torrent, Peer self) {
+        this.announceURL = torrent.getMetaInfo().getAnnounce();
+        this.infoHash = torrent.getMetaInfo().getInfoHash();
         this.self = self;
-        this.left = left;
+        this.left = torrent.getLeft();
     }
 
     public TrackerInfo send() throws Exception {
@@ -39,6 +44,7 @@ public class TrackerRequest {
             .GET()
             .build();
 
+        log.debug("announcing at {}", getAnnounceURI());
         HttpResponse<InputStream> response = httpClient.send(httpRequest, BodyHandlers.ofInputStream());
         return new TrackerInfo(response.body());
     }
@@ -50,11 +56,10 @@ public class TrackerRequest {
     // Complete uri used to make the request to the tracker
     public String createCompleteUriString() {
         return announceURL
-            + "?info_hash=" + infoHash
-            + "&peer_id=" + self.getId()
+            + "?info_hash=" + Utils.byteArrayToURLString(infoHash.asBytes())
+            + "&peer_id=" + Utils.byteArrayToURLString(self.getId())
             + "&port=" + self.getPort()
             + "&left=" + left
-            + "compact=1";
+            + "&compact=1";
     }
-
 }

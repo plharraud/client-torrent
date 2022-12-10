@@ -6,22 +6,20 @@ import bittorrent.client.torrent.Torrent;
 public class Tracker {
 
     private Torrent torrent;
-
-    private TrackerInfo trackerInfo;
-
     private Peer self;
+    private TrackerInfo trackerInfo;
 
     public Tracker(Torrent torrent, Peer self) {
         this.torrent = torrent;
         this.self = self;
     }
 
-    private TrackerInfo fetchTrackerInfo() {
-        TrackerRequest req = new TrackerRequest(torrent.getAnnounce(), torrent.getInfo_hash(), self, torrent.getLeft());
+    private TrackerInfo fetchTrackerInfo() throws Exception {
+        TrackerRequest req = new TrackerRequest(torrent, self);
         return req.send();
     }
 
-    public TrackerInfo getInfo() {
+    public TrackerInfo getInfo() throws Exception {
         if (trackerInfo == null) {
             trackerInfo = fetchTrackerInfo();
         }

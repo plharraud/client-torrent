@@ -1,9 +1,10 @@
-package bittorrent.client;
+package bittorrent.client.leecher;
 
 import bittorrent.client.tcpMessage.BittorrentMessage;
 import bittorrent.client.torrent.Torrent;
 import bittorrent.client.torrent.TorrentFile_;
-import bittorrent.client.torrent.TorrentTask;
+import bittorrent.client.Handshake;
+import bittorrent.client.Peer;
 import bittorrent.client.tcpMessage.*;
 
 import java.io.*;
@@ -18,11 +19,9 @@ public class Leecher {
 
     private static Logger log = LogManager.getLogger();
 
-    public void leech(TorrentTask task, byte[] peer_id, Peer seeder) throws IOException {
-
+    public static void leech(Torrent torrent, Peer self, Peer seeder) throws IOException {
         try {
             // TODO : Remove / before IP
-            Torrent torrent = task.getTorrent();
             String server = seeder.getIp().toString().substring(1); // Server name or IP address
             int server_port = seeder.getPort();
             // Create socket that is connected to server on specified port
@@ -33,7 +32,7 @@ public class Leecher {
             DataOutputStream data_out = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 
             // HANDSHAKE ===>
-            Handshake handreq = new Handshake(new byte[8], torrent.getInfo_hash(), peer_id);
+            Handshake handreq = new Handshake(new byte[8], torrent.getMetaInfo().getInfoHash(), self.getId());
             handreq.sendHandshake(data_out);
 
             // HANDSHAKE <===
@@ -61,9 +60,9 @@ public class Leecher {
             log.debug(unchoke);
 
             // Collect all pieces and place it in a buffer
-            TorrentFile_ file = new TorrentFile_(torrent.getLength(), torrent.getPiece_length());
+            TorrentFile_ file = new TorrentFile_(torrent.getMetaInfo().getLength(), torrent.getMetaInfo().getPieceLength());
             file.Leeching100(data_in, data_out);
-            file.generateFile(task.getDownloadedFilePath());
+            file.generateFile(torrent.getTarget().getFile().getPath());
 
 
             log.info("Closing the socket");

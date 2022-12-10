@@ -22,6 +22,7 @@ public class Utils {
      *      "https://stackoverflow.com/q/9655181">https://stackoverflow.com/q/9655181</a>
      */
     public static String bytesToHex(byte[] bytes) {
+        if (bytes == null) { return null; }
         char[] hexChars = new char[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++) {
             int v = bytes[j] & 0xFF;
@@ -90,11 +91,11 @@ public class Utils {
     }
 
     // TODO: add tests to this function
-    public static byte[][] deepenByteArray(byte[] byteArray, int sliceLengh) {
-        assert (byteArray.length % sliceLengh == 0);
-        byte[][] deeperByteArray = new byte[byteArray.length / sliceLengh][sliceLengh];
+    public static byte[][] deeperByteArray(byte[] byteArray, int sliceLength) {
+        assert (byteArray.length % sliceLength == 0);
+        byte[][] deeperByteArray = new byte[byteArray.length / sliceLength][sliceLength];
         for (int i = 0; i < byteArray.length; i += 6) {
-            deeperByteArray[i / sliceLengh] = Arrays.copyOfRange(byteArray, i, i + sliceLengh);
+            deeperByteArray[i / sliceLength] = Arrays.copyOfRange(byteArray, i, i + sliceLength);
         }
         return deeperByteArray;
     }

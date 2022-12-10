@@ -3,13 +3,14 @@ package bittorrent.client;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
-
+import java.util.Random;
 
 public class Peer {
+
     public static final int PEER_SIZE = 6;
     private InetAddress ip;
     private int port;
-    private int id;
+    private byte[] id;
 
     // Constructor from a byte array
     public Peer(byte[] peerInfo) {
@@ -32,10 +33,20 @@ public class Peer {
 
     public Peer(int port) {
         this.port = port;
+        randomId();
     }
 
-    public int getId() {
-        return 0;
+    public byte[] getId() {
+        return id;
+    }
+
+    public void setId(byte[] id) {
+        this.id = id;
+    }
+
+    public void randomId() {
+        this.id = new byte[20];
+        new Random().nextBytes(this.id);
     }
 
     public InetAddress getIp() {
@@ -48,7 +59,11 @@ public class Peer {
 
     @Override
     public String toString() {
-        return "Peer [ip=" + ip + ", port=" + port + "]";
+        return "Peer [id="+ Utils.bytesToHex(id) +", ip=" + ip + ", port=" + port + "]";
+    }
+
+    public Boolean equals(Peer p) {
+        return port == p.getPort();
     }
 
 }
