@@ -22,7 +22,8 @@ public class CLIHandler {
     public static Torrent parse(String[] args) throws Exception {
         Options cliOptions = new Options();
         cliOptions.addOption("debug", false, "print debug messages");
-        cliOptions.addOption("info", false, "print information");
+        cliOptions.addOption("info", false, "print some information");
+        cliOptions.addOption("all", false, "print all information");
 
         CommandLineParser cliParser = new DefaultParser();
         CommandLine cliCmd = cliParser.parse(cliOptions, args);
@@ -32,6 +33,9 @@ public class CLIHandler {
         }
         if (cliCmd.hasOption("info")) {
             initLogger(Level.INFO);
+        }
+        if (cliCmd.hasOption("all")) {
+            initLogger(Level.ALL);
         }
 
         log.info("set log level to {}", log.getLevel());

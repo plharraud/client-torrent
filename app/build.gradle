@@ -33,8 +33,6 @@ dependencies {
     // https://logging.apache.org/log4j/2.x/maven-artifacts.html
     implementation 'org.apache.logging.log4j:log4j-api:2.19.0'
     implementation 'org.apache.logging.log4j:log4j-core:2.19.0'
-
-    implementation 'com.dampcake:bencode:1.4'
 }
 
 application {

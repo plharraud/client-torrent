@@ -124,4 +124,12 @@ public class Utils {
         return bytes;
     }
 
+    public static String byteArraytoBin(byte[] in) {
+        String s = "";
+        for (byte b : in) {
+            s += Integer.toBinaryString(b & 255 | 256).substring(1);
+        }
+        return s;
+    }
+
 }

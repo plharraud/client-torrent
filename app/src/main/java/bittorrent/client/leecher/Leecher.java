@@ -1,19 +1,16 @@
 package bittorrent.client.leecher;
 
-import bittorrent.client.tcpMessage.BittorrentMessage;
 import bittorrent.client.torrent.Torrent;
 import bittorrent.client.torrent.TorrentFile_;
-import bittorrent.client.Handshake;
 import bittorrent.client.Peer;
 import bittorrent.client.tcpMessage.*;
 
 import java.io.*;
+import java.net.ConnectException;
 import java.net.Socket;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import bittorrent.client.tcpMessage.Bitfield;
 
 public class Leecher {
 
@@ -38,18 +35,16 @@ public class Leecher {
             // HANDSHAKE <===
             Handshake handresp = new Handshake(data_in);
 
-            log.debug("Handshake request : ");
-            log.debug(handreq.toString());
-            log.debug("Handshake response : ");
-            log.debug(handresp.toString());
+            log.debug("Handshake request  : " + handreq);
+            log.debug("Handshake response : " + handresp);
 
             // BITFIELD <===
             Bitfield  bitfield_received = (Bitfield) new BittorrentMessage(data_in).identify();
             log.debug(bitfield_received);
 
             // BITFIELD ===>
-            Bitfield bitfield_sent = new Bitfield(new byte[2]);
-            bitfield_sent.send(data_out);
+            //Bitfield bitfield_sent = new Bitfield(new byte[2]);
+            //bitfield_sent.send(data_out);
 
             // INTERESTED ===>
             Interested interested = new Interested();
@@ -68,9 +63,11 @@ public class Leecher {
             log.info("Closing the socket");
             socket.close(); // Close the socket and its streams
 
-        } catch (Exception e) {
+        } catch (ConnectException e) {
+            log.info("connection refused");
+        } catch (EOFException e) {
+            log.error("End of file in received packet");
             e.printStackTrace();
         }
-
     }
 }

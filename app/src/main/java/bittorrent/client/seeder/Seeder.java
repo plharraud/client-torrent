@@ -2,20 +2,16 @@ package bittorrent.client.seeder;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.util.Arrays;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import bittorrent.client.Handshake;
 import bittorrent.client.Peer;
-import bittorrent.client.Utils;
 import bittorrent.client.tcpMessage.Bitfield;
 import bittorrent.client.tcpMessage.BittorrentMessage;
+import bittorrent.client.tcpMessage.Handshake;
 import bittorrent.client.tcpMessage.Request;
 import bittorrent.client.tcpMessage.Unchoke;
 import bittorrent.client.torrent.Torrent;
@@ -25,30 +21,40 @@ public class Seeder {
 
     private static Logger log = LogManager.getLogger();
 
+    private static int handleRequest(Request r, Torrent t, DataOutputStream out) throws IOException {
+        // Handle the request by sending a piece message
+        // Select the piece from the file
+        byte[] piece = t.getTarget().getBlock(r.getPieceLength(), r.getPieceIndex(), r.getPieceBeginOffset(), r.getPieceLength());
+        assert piece.length == r.getPieceLength();
+
+        // Create the message:
+        Piece pieceMessage = new Piece(r.getPieceIndex(), r.getPieceBeginOffset(), piece);
+        log.debug("===> " + pieceMessage);
+        pieceMessage.send(out);
+        return 0;
+    }
+
     public static void seed(Torrent torrent, Socket clientSocket, Peer peer) {
         try {
-            File file = torrent.getTarget().getFile();
-            byte[] fileAsBytes = Files.readAllBytes(file.toPath());
-
             DataInputStream data_in = new DataInputStream(clientSocket.getInputStream());
             DataOutputStream data_out = new DataOutputStream(clientSocket.getOutputStream());
 
             // HANDSHAKE <===
             Handshake handreq1 = new Handshake(data_in);
-            log.debug("Handshake request : ");
-            log.debug(handreq1.toString());
+            log.debug("Handshake request : " + handreq1);
+            // TODO CHECK HANDSHAKE
 
             // HANDSHAKE ===>
             Handshake handresp = new Handshake(new byte[8], torrent.getMetaInfo().getInfoHash(), peer.getId());
             handresp.sendHandshake(data_out);
-            log.debug("Handshake response : \n" + handresp);
+            log.debug("Handshake response : " + handresp);
 
             // BITFIELD <===
-            BittorrentMessage bitfield = (new BittorrentMessage(data_in)).identify();
-            log.debug("<=== " + bitfield);
+            //BittorrentMessage bitfield = (new BittorrentMessage(data_in)).identify();
+            //log.debug("<=== " + bitfield);
 
             // BITFIELD ===>
-            Bitfield seederBitfield = new Bitfield(Utils.hexStringToByteArray("ffffff80"));
+            Bitfield seederBitfield = torrent.verifyFile();
             log.debug("===> " + seederBitfield);
             seederBitfield.send(data_out);
 
@@ -68,24 +74,13 @@ public class Seeder {
                 log.debug("<=== " + incomingMessage);
                 switch(incomingMessage.getMessageType()){
                     case REQUEST:
-                        Request request = (Request) incomingMessage;
-                        // Handle the request by sending a piece message
-                        // Select the piece from the file
-                        int from = request.getPieceIndex() * torrent.getMetaInfo().getPieceLength() + request.getPieceBeginOffset();
-                        int to = from + request.getPieceLength();
-                        byte[] piece = Arrays.copyOfRange(fileAsBytes,from,to );
-                        assert piece.length == request.getPieceLength();
-                        // Create the message:
-                        Piece pieceMessage = new Piece(request.getPieceIndex(), request.getPieceBeginOffset(), piece);
-                        log.debug("===> " + pieceMessage);
-                        pieceMessage.send(data_out);
+                        handleRequest((Request) incomingMessage, torrent, data_out);
                         break;
                     case NOT_INTERESTED:
                         clientInterested = false;
                         break;
                     default:
                         break;
-
                 }
 
                 // Exit if the client is no longer interested

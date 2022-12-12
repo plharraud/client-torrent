@@ -1,9 +1,12 @@
-package bittorrent.client;
+package bittorrent.client.tcpMessage;
 
 import java.io.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import bittorrent.client.Hash;
+import bittorrent.client.Utils;
 
 public class Handshake {
 
@@ -22,7 +25,7 @@ public class Handshake {
         this.extension = extension;
         this.info_hash = info_hash;
         this.peer_id = peer_id;
-        //verifyHandshakeIntegrity(info_hash);
+        verifyHandshakeIntegrity(info_hash);
     }
 
     public Handshake(DataInputStream in) throws IOException {
@@ -44,7 +47,7 @@ public class Handshake {
             this.extension = extension;
             this.info_hash = Hash.fromBytes(hash);
             this.peer_id = peerid;
-            //verifyHandshakeIntegrity(); // check le hash avec lui meme ?
+            verifyHandshakeIntegrity(info_hash); // check le hash avec lui meme ?
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -71,10 +74,10 @@ public class Handshake {
             log.error("1 : Is not a valid BitTorrent protocol");
             return 1;
         }
-        if(! this.info_hash.equals(hash)){
+        /*if(! this.info_hash.equals(hash)){
             log.error("2 : Wrong info hash");
             return 2;
-        }
+        }*/
         log.debug("0 : Valid Handshake");
         return 0;
     }

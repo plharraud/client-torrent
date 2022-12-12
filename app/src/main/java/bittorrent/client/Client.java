@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 
 import bittorrent.client.cli.CLIException;
 import bittorrent.client.cli.CLIHandler;
-import bittorrent.client.leecher.Leecher;
 import bittorrent.client.seeder.SeederThread;
 import bittorrent.client.torrent.Torrent;
 import bittorrent.client.tracker.Tracker;
@@ -32,11 +31,12 @@ public class Client {
             Tracker tracker = new Tracker(torrent, self);
             TrackerInfo trackerInfo = tracker.getInfo();
 
+            /*
             for (Peer peer : trackerInfo.getPeers()) {
                 if (! peer.equals(self)) {
                     Leecher.leech(torrent, self, peer);
                 }
-            }
+            }*/
 
             ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
 

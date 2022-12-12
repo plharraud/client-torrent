@@ -2,6 +2,7 @@ package bittorrent.client;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,9 +24,13 @@ public class Hash {
     }
 
     public byte[] sha1(byte[] message) {
+        return sha1len(message, message.length);
+    }
+
+    public byte[] sha1len(byte[] message, int length) {
         try {
             MessageDigest sha1 = MessageDigest.getInstance("SHA-1"); 
-            sha1.update(message, 0, message.length);
+            sha1.update(message, 0, length);
             return sha1.digest();
         } catch (NoSuchAlgorithmException e) {
             log.error("sha1 not supported");
@@ -61,6 +66,6 @@ public class Hash {
     }
 
     public Boolean equals(Hash h) {
-        return this.hash.equals(h.asBytes());
+        return Arrays.equals(this.hash, h.asBytes());
     }
 }

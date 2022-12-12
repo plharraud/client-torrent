@@ -29,6 +29,5 @@ public enum BittorrentMessageType {
         INT_TO_MESSAGE_TYPE_MAP.put(7, PIECE);
         INT_TO_MESSAGE_TYPE_MAP.put(8, CANCEL);
         INT_TO_MESSAGE_TYPE_MAP.put(9, PORT);
-        
     }
 }

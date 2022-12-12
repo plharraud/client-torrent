@@ -31,6 +31,7 @@ public class TorrentFile {
     private String name;
     private int length;
     private int pieceLength;
+    private int piecesAmount;
     private List<Hash> hashes = new ArrayList<Hash>();
 
     public TorrentFile(File file) throws IOException, BadTorrentFileException, NoSuchAlgorithmException {
@@ -51,14 +52,14 @@ public class TorrentFile {
         name = info.get("name").getString();
         length = info.get("length").getInt();
         pieceLength = info.get("piece length").getInt();
-        int piecesAmount = (int) Math.ceil(length / (float) pieceLength);
+        piecesAmount = (int) Math.ceil(length / (float) pieceLength);
         log.info("name={}, length={}, piece length={}, pieces={}", name, length, pieceLength, piecesAmount);
 
         byte[] pieces = info.get("pieces").getBytes();
         for (int i = 0; i < pieces.length; i += 20) {
             byte[] hashBytes = Arrays.copyOfRange(pieces, i, i+20);
             log.debug("piece {}, hash={}", i/20, Utils.bytesToHex(hashBytes));
-            hashes.add(new Hash(hashBytes));
+            hashes.add(Hash.fromBytes(hashBytes));
         }
 
         if (piecesAmount != hashes.size()) {
@@ -116,6 +117,10 @@ public class TorrentFile {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getPiecesAmount() {
+        return piecesAmount;
     }
 
     public List<Hash> getHashes() {

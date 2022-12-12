@@ -29,16 +29,7 @@ public class TorrentFile_ {
         if (last_piece_parts == 2) {
             this.last_block_size -= maxsizepacket;
         }
-        displayTorrentInfos();
         torrentFile = new Piece[piece_parts];
-    }
-
-    public void displayTorrentInfos() {
-        log.debug("torrent length : " + length);
-        log.debug("nb of pieces : " + piece_parts);
-        log.debug("piece length : " + piece_length);
-        log.debug("last block : " + last_block_size);
-        log.debug("download rate : " + maxsizepacket);
     }
 
     public void Leeching100(DataInputStream data_in, DataOutputStream data_out) {
@@ -76,9 +67,10 @@ public class TorrentFile_ {
     }
 
     public void bytesToFile(String filePath) {
-        try (OutputStream out = new BufferedOutputStream(
-                new FileOutputStream(filePath))) {
+        try {
+            OutputStream out = new BufferedOutputStream(new FileOutputStream(filePath));
             out.write(imagebytes.toByteArray());
+            out.close();
             log.info("✔ File generated");
         } catch (Exception e) {
             e.printStackTrace();

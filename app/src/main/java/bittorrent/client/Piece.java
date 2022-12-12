@@ -12,6 +12,7 @@ public class Piece {
     byte[] piecesConcat;
     int parts;
     int index;
+    Hash hash;
 
     public Piece(DataInputStream data_in, DataOutputStream data_out, int index) {
         try {

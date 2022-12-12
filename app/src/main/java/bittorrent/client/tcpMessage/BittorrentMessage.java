@@ -4,22 +4,35 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 public class BittorrentMessage implements IBittorentMessageSender, IBittorentMessageHandler {
     DataInputStream dataInput;
     int messageLength;
     int messageType;
 
+    Logger log = LogManager.getLogger();
+
     /**
      * Builds the bittorent message from a DataInputStream
      * @param dataInput
      * @throws IOException
      */
-    public BittorrentMessage(DataInputStream dataInput) throws IOException{
+    public BittorrentMessage(DataInputStream dataInput) throws IOException {
         // readInt reads 4 bytes of data and outputs them as an int
-        this.messageLength = dataInput.readInt();
+        try {
+            this.messageLength = dataInput.readInt();
+        } catch (IOException e) {
+            log.error("readInt failed " + e);
+        }
         // reads 1 byte of data and output them as an int, if we are at the end of the message , returns -1
-        this.messageType = dataInput.read();
+        try {
+            this.messageType = dataInput.read();
+        } catch (IOException e) {
+            log.error("read (byte) failed " + e);
+        }
         // Remainder of the message
         this.dataInput = dataInput;
     }
@@ -53,6 +66,9 @@ public class BittorrentMessage implements IBittorentMessageSender, IBittorentMes
      */
     public BittorrentMessage identify() throws IOException {
         BittorrentMessageType type = BittorrentMessageType.INT_TO_MESSAGE_TYPE_MAP.get(messageType);
+        if (type == null) {
+            throw new IOException(messageType +" is not a valid bittorrent message type");
+        }
         BittorrentMessage identifiedMessage = null;
         switch(type){
             case BITFIELD:
@@ -92,7 +108,6 @@ public class BittorrentMessage implements IBittorentMessageSender, IBittorentMes
                 break;
         }
         return identifiedMessage;
-
     }
 
     public BittorrentMessageType getMessageType() {
