@@ -1,7 +1,6 @@
 package bittorrent.client.leecher;
 
 import bittorrent.client.torrent.Torrent;
-import bittorrent.client.torrent.TorrentFile_;
 import bittorrent.client.Peer;
 import bittorrent.client.tcpMessage.*;
 

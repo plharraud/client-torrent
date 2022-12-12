@@ -1,9 +1,11 @@
-package bittorrent.client;
+package bittorrent.client.leecher;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+
+import bittorrent.client.Hash;
 
 public class Piece {
 

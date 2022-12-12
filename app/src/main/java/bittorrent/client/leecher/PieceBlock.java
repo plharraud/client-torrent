@@ -1,4 +1,4 @@
-package bittorrent.client;
+package bittorrent.client.leecher;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;

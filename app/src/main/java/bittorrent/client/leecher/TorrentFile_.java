@@ -1,12 +1,10 @@
-package bittorrent.client.torrent;
+package bittorrent.client.leecher;
 
 import java.io.*;
 import java.nio.file.Files;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import bittorrent.client.Piece;
 
 public class TorrentFile_ {
     final int maxsizepacket = 16384;

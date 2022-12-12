@@ -1,10 +1,12 @@
-package bittorrent.client;
+package bittorrent.client.leecher;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import bittorrent.client.Utils;
 
 public class Request {
     /*
